@@ -1,0 +1,185 @@
+fixture:
+  fixtureOrder: 6
+  class: app\admin\Price
+  factoryClass: app\admin\PriceMigrationFactory
+  records:
+    -
+      id: 1
+      FK_Usr_createdBy: 1
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 10.23
+      FK_Pro_product: 1
+    -
+      id: 2
+      FK_Usr_createdBy: 2
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 11.23
+      FK_Pro_product: 2
+    -
+      id: 3
+      FK_Usr_createdBy: 3
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 12.23
+      FK_Pro_product: 3
+    -
+      id: 4
+      FK_Usr_createdBy: 4
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 13.23
+      FK_Pro_product: 4
+    -
+      id: 5
+      FK_Usr_createdBy: 5
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 14.23
+      FK_Pro_product: 5
+    -
+      id: 6
+      FK_Usr_createdBy: 1
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 15.23
+      FK_Pro_product: 6
+    -
+      id: 7
+      FK_Usr_createdBy: 2
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 16.23
+      FK_Pro_product: 7
+    -
+      id: 8
+      FK_Usr_createdBy: 3
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 17.23
+      FK_Pro_product: 8
+    -
+      id: 9
+      FK_Usr_createdBy: 4
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      name: 'Detaliczna'
+      value: 18.23
+      FK_Pro_product: 9
+    -
+      id: 10
+      FK_Usr_createdBy: 5
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 1
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Detaliczna'
+      value: 19.23
+      FK_Pro_product: 10
+    -
+      id: 11
+      FK_Usr_createdBy: 1
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 2
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 5.23
+      FK_Pro_product: 1
+    -
+      id: 12
+      FK_Usr_createdBy: 2
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 3
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 6.23
+      FK_Pro_product: 2
+    -
+      id: 13
+      FK_Usr_createdBy: 3
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 4
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 7.23
+      FK_Pro_product: 3
+    -
+      id: 14
+      FK_Usr_createdBy: 4
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 5
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 8.23
+      FK_Pro_product: 4
+    -
+      id: 15
+      FK_Usr_createdBy: 5
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 1
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 9.23
+      FK_Pro_product: 5
+    -
+      id: 16
+      FK_Usr_createdBy: 1
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 2
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 10.23
+      FK_Pro_product: 6
+    -
+      id: 17
+      FK_Usr_createdBy: 2
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 3
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 11.23
+      FK_Pro_product: 7
+    -
+      id: 18
+      FK_Usr_createdBy: 3
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 4
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 12.23
+      FK_Pro_product: 8
+    -
+      id: 19
+      FK_Usr_createdBy: 4
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 5
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 13.23
+      FK_Pro_product: 9
+    -
+      id: 20
+      FK_Usr_createdBy: 5
+      createdAt: '2021-09-01 13:01:23'
+      FK_Usr_updatedBy: 1
+      updatedAt: '2021-09-01 14:01:23'
+      name: 'Hurtowa'
+      value: 14.23
+      FK_Pro_product: 10

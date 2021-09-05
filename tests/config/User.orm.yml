@@ -1,0 +1,9 @@
+entity: app\admin\User
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  name:
+    type: varchar

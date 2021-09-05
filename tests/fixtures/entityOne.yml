@@ -1,0 +1,11 @@
+fixture:
+  fixtureOrder: 2
+  class: app\admin\EntityOne
+  factoryClass: app\admin\EntityOneMigrationFactory
+  records:
+    -
+      id: 1
+      name: 'encja 1 1'
+    -
+      id: 2
+      name: 'encja 1 2'

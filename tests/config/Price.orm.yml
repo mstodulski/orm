@@ -1,0 +1,40 @@
+entity: app\admin\Price
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  FK_Usr_createdBy:
+    type: entity
+    entityClass: app\admin\User
+  createdAt:
+    type: datetime
+  FK_Usr_updatedBy:
+    type: entity
+    entityClass: app\admin\User
+    lazy: false
+    nullable: true
+  updatedAt:
+    type: datetime
+    nullable: true
+  name:
+    type: varchar
+  value:
+    type: decimal
+    precision: 10
+    scale: 2
+    nullable: true
+  FK_Pro_product:
+    type: entity
+    entityClass: app\admin\Product
+foreignKeys:
+  -
+    columnName: 'FK_Pro_product'
+    referencedColumnName: 'id'
+    updateRule: 'CASCADE'
+    deleteRule: 'CASCADE'
+
+lifecycle:
+#  postLoad: app\admin\ProductEventService::postLoadEventProductFeature
+#  postCreate: app\admin\ProductEventService::postCreateEventProductFeature

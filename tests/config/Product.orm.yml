@@ -1,0 +1,70 @@
+entity: app\admin\Product
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  FK_Usr_createdBy:
+    type: entity
+    entityClass: app\admin\User
+  createdAt:
+    type: datetime
+  FK_Usr_updatedBy:
+    type: entity
+    entityClass: app\admin\User
+    lazy: false
+    nullable: true
+  updatedAt:
+    type: datetime
+    nullable: true
+  sortOrder:
+    type: int
+    nullable: true
+  creatorBrowser:
+    type: varchar
+    nullable: true
+  name:
+    type: varchar
+  archived:
+    type: boolean
+    defaultValue: false
+  weight:
+    type: double
+    precision: 10
+    scale: 2
+    nullable: true
+  features:
+    type: collection
+    entityClass: app\admin\Feature
+    joiningField: FK_Pro_product
+  prices:
+    type: collection
+    entityClass: app\admin\Price
+    joiningField: FK_Pro_product
+    lazy: false
+  entityOne:
+    type: entity
+    entityClass: app\admin\EntityOne
+  entityTwo:
+    type: entity
+    entityClass: app\admin\EntityTwo
+    nullable: true
+  date:
+    type: date
+    nullable: true
+tableIndexes:
+  -
+    fields:
+      - sortOrder
+foreignKeys:
+  -
+    columnName: 'entityOne'
+    referencedColumnName: 'id'
+lifecycle:
+  preRemove: app\admin\ProductEventService::preRemoveEvent
+  postRemove: app\admin\ProductEventService::postRemoveEvent
+  preUpdate: app\admin\ProductEventService::preUpdateEvent
+  postUpdate: app\admin\ProductEventService::postUpdateEvent
+  postLoad: app\admin\ProductEventService::postLoadEvent
+  postCreate: app\admin\ProductEventService::postCreateEvent

@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+use mstodulski\database\OrmService;
+
+require_once 'vendor/autoload.php';
+
+//c:/wamp64/bin/php/php8.0.1/php.exe bin/morm tests/config.yml generate migration
+//c:/wamp64/bin/php/php8.0.1/php.exe bin/morm tests/config.yml migrate
+
+//c:/wamp64/bin/php/php8.0.1/php.exe bin/morm tests/config.yml import fixtures
+//zrobić fixtury
+
+OrmService::route($argv);

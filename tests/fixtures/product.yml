@@ -1,0 +1,145 @@
+fixture:
+  fixtureOrder: 4
+  class: app\admin\Product
+  factoryClass: app\admin\ProductMigrationFactory
+  records:
+    -
+      id: 1
+      FK_Usr_createdBy: 2
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 1
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 1'
+      archived: false
+      weight: 1.23
+      entityOne: 1
+      entityTwo: 2
+      date: '2021-09-03 15:16:00'
+    -
+      id: 2
+      FK_Usr_createdBy: 3
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 2
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 2'
+      archived: false
+      weight: 2.33
+      entityOne: 2
+      entityTwo: 1
+      date: '2021-09-03 15:16:00'
+    -
+      id: 3
+      FK_Usr_createdBy: 4
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 3
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 3'
+      archived: false
+      weight: 3.43
+      entityOne: 1
+      entityTwo: 2
+      date: '2021-09-03 15:16:00'
+    -
+      id: 4
+      FK_Usr_createdBy: 5
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 4
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 4'
+      archived: false
+      weight: 4.53
+      entityOne: 2
+      entityTwo: 1
+      date: '2021-09-03 15:16:00'
+    -
+      id: 5
+      FK_Usr_createdBy: 1
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 5
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 5'
+      archived: false
+      weight: 4.53
+      entityOne: 1
+      entityTwo: 2
+      date: null
+    -
+      id: 6
+      FK_Usr_createdBy: 2
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: null
+      updatedAt: null
+      sortOrder: 6
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 6'
+      archived: false
+      weight: 5.63
+      entityOne: 2
+      entityTwo: 1
+      date: null
+    -
+      id: 7
+      FK_Usr_createdBy: 3
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: 1
+      updatedAt: '2021-08-02 15:01:23'
+      sortOrder: 7
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 7'
+      archived: false
+      weight: 6.63
+      entityOne: 1
+      entityTwo: null
+      date: null
+    -
+      id: 8
+      FK_Usr_createdBy: 4
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: 2
+      updatedAt: '2021-08-02 15:01:23'
+      sortOrder: 8
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 8'
+      archived: false
+      weight: 7.63
+      entityOne: 2
+      entityTwo: null
+      date: null
+    -
+      id: 9
+      FK_Usr_createdBy: 5
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: 3
+      updatedAt: '2021-08-02 15:01:23'
+      sortOrder: 8
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 9'
+      archived: false
+      weight: 8.63
+      entityOne: 1
+      entityTwo: null
+      date: null
+    -
+      id: 10
+      FK_Usr_createdBy: 1
+      createdAt: '2021-08-01 13:01:23'
+      FK_Usr_updatedBy: 4
+      updatedAt: '2021-08-02 15:01:23'
+      sortOrder: 8
+      creatorBrowser: 'Fajerfoks'
+      name: 'Produkt 10'
+      archived: false
+      weight: 9.63
+      entityOne: 2
+      entityTwo: null
+      date: null
