@@ -18,6 +18,6 @@
 	},
 	"bin": ["bin/morm"],
   	"require-dev": {
-    	"ext-apcu": "*"
- 	 }
+        "ext-apcu": "*"
+ 	}
 }
