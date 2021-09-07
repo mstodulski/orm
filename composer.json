@@ -10,6 +10,12 @@
 		"mstodulski/cache": "*",
 		"nikic/php-parser": "^4.11"
 	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:mstodulski/cache.git"
+		}
+	],
 	"autoload": {
 		"psr-4": {
 			"mstodulski\\database\\": "src",
