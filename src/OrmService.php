@@ -167,12 +167,12 @@ class OrmService
 
     public static function route(array $arguments)
     {
-        $config = Yaml::parseFile($arguments[1]);
+        [$config, $arguments] = self::readParameters($arguments);
 
         $sqlAdapter = new $config['sqlAdapterClass']();
         self::$entityManager = EntityManager::create($sqlAdapter, $config);
 
-        switch ($arguments[2]) {
+        switch ($arguments[1]) {
             case 'generate':
                 self::generateAction($config, $arguments);
                 break;
@@ -183,18 +183,84 @@ class OrmService
                 self::importAction($config, $arguments);
                 break;
             default:
-                throw new Exception('Unknown action: ' . $arguments[2]);
+                throw new Exception('Unknown action: ' . $arguments[1]);
         }
+    }
+
+    private static function readParameters(array $arguments) : array
+    {
+        $config['dsn'] = null;
+        $config['user'] = null;
+        $config['password'] = null;
+        $config['entityConfigurationDir'] = 'config/';
+        $config['migrationDir'] = 'migrations/';
+        $config['fixtureDir'] = 'fixtures/';
+        $config['mode'] = 'prod';
+        $config['sqlAdapterClass'] = 'mstodulski\database\MySQLAdapter';
+
+        $parametersArray = [];
+        $arrayKey = null;
+        foreach ($arguments as $argument) {
+
+            if (str_starts_with($argument, '-')) {
+                $arrayKey = $argument;
+            } else {
+                if ($arrayKey === null) $arrayKey = $argument;
+                $parametersArray[$arrayKey] = $argument;
+                $arrayKey = null;
+            }
+        }
+
+        foreach ($parametersArray as $parameter => $value) {
+            switch ($parameter) {
+                case '-dsn':
+                    $config['dsn'] = $value;
+                    break;
+                case '-u':
+                    $config['user'] = $value;
+                    break;
+                case '-p':
+                    $config['password'] = $value;
+                    break;
+                case '-cd':
+                    $config['entityConfigurationDir'] = trim($value, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                    break;
+                case '-md':
+                    $config['migrationDir'] = trim($value, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                    break;
+                case '-fd':
+                    $config['fixtureDir'] = trim($value, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                    break;
+                case '-ac':
+                    $config['sqlAdapterClass'] = $value;
+                    break;
+            }
+        }
+
+        if (isset($parametersArray['-dsn'])) unset($parametersArray['-dsn']);
+        if (isset($parametersArray['-u'])) unset($parametersArray['-u']);
+        if (isset($parametersArray['-p'])) unset($parametersArray['-p']);
+        if (isset($parametersArray['-cd'])) unset($parametersArray['-cd']);
+        if (isset($parametersArray['-md'])) unset($parametersArray['-md']);
+        if (isset($parametersArray['-fd'])) unset($parametersArray['-fd']);
+        if (isset($parametersArray['-ac'])) unset($parametersArray['-ac']);
+
+        $arguments = [];
+        foreach ($parametersArray as $value) {
+            $arguments[] = $value;
+        }
+
+        return [$config, $arguments];
     }
 
     private static function importAction(array $config, array $arguments)
     {
-        switch ($arguments[3]) {
+        switch ($arguments[2]) {
             case 'fixtures':
                 self::importFixturesAction($config);
                 break;
             default:
-                throw new Exception('Unknown import argument: ' . $arguments[3]);
+                throw new Exception('Unknown import argument: ' . $arguments[2]);
         }
     }
 
@@ -237,7 +303,7 @@ class OrmService
 
     private static function generateAction(array $config, array $arguments)
     {
-        switch ($arguments[3]) {
+        switch ($arguments[2]) {
             case 'migration':
                 self::generateMigrationAction($config);
                 break;
