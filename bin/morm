@@ -4,6 +4,5 @@
 use mstodulski\database\OrmService;
 
 require_once 'vendor/autoload.php';
-//php.exe bin/morm -dsn "mysql:host=localhost;port=3306;dbname=orm;charset=utf8" -u root -p -cd tests/config -md tests/migrations -fd tests/fixtures -ac "mstodulski\database\MySQLAdapter" generate migration
-
+//c:/wamp64/bin/php/php8.0.1/php.exe bin/morm -dsn "mysql:host=localhost;port=3306;dbname=orm;charset=utf8" -u root -p -cd tests/config -md tests/migrations -fd tests/fixtures -ac "mstodulski\database\MySQLAdapter" generate migration
 OrmService::route($argv);

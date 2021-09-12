@@ -31,8 +31,8 @@ class Test extends TestCase
     {
         parent::__construct($name, $data, $dataName);
 
-        $this->config = Yaml::parseFile('tests/config.yml');
-        $mysqlAdapter = new MySQLAdapter();
+        $this->config = getConfig();
+        $mysqlAdapter = new $this->config['sqlAdapterClass']();
         $this->entityManager = EntityManager::create($mysqlAdapter, $this->config);
     }
 
@@ -1161,15 +1161,47 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'generate';
-        $arguments['3'] = 'migration';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "generate";
+        $arguments[] = "migration";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'migrate';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "migrate";
 
         OrmService::route($arguments);
 
@@ -1218,22 +1250,70 @@ class Test extends TestCase
         $this->entityManager->turnOnCheckForeignKeys();
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'generate';
-        $arguments['3'] = 'migration';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "generate";
+        $arguments[] = "migration";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'migrate';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "migrate";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'import';
-        $arguments['3'] = 'fixtures';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "import";
+        $arguments[] = "fixtures";
 
         OrmService::route($arguments);
 
@@ -1256,15 +1336,47 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'generate';
-        $arguments['3'] = 'migration';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "generate";
+        $arguments[] = "migration";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'migrate';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "migrate";
 
         OrmService::route($arguments);
 
@@ -1296,15 +1408,47 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'generate';
-        $arguments['3'] = 'migration';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "generate";
+        $arguments[] = "migration";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'migrate';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "migrate";
 
         OrmService::route($arguments);
 
@@ -1327,15 +1471,47 @@ class Test extends TestCase
         }
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'generate';
-        $arguments['3'] = 'migration';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "generate";
+        $arguments[] = "migration";
 
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments['1'] = 'tests/config.yml';
-        $arguments['2'] = 'migrate';
+        $arguments[] = "bin/morm";
+        $arguments[] = "-dsn";
+        $arguments[] = $this->config['dsn'];
+        $arguments[] = "-u";
+        $arguments[] = $this->config['user'];
+        if ($this->config['password'] != '') {
+            $arguments[] = "-p";
+            $arguments[] = $this->config['password'];
+        }
+        $arguments[] = "-cd";
+        $arguments[] = $this->config['entityConfigurationDir'];
+        $arguments[] = "-md";
+        $arguments[] = $this->config['migrationDir'];
+        $arguments[] = "-fd";
+        $arguments[] = $this->config['fixtureDir'];
+        $arguments[] = "-ac";
+        $arguments[] = $this->config['sqlAdapterClass'];
+        $arguments[] = "migrate";
 
         OrmService::route($arguments);
 
@@ -1350,5 +1526,4 @@ class Test extends TestCase
 
         $this->assertNull($entityZeroTable);
     }
-
 }

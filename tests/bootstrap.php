@@ -1,9 +1,21 @@
 <?php
 
 use mstodulski\database\EntityManager;
-use mstodulski\database\MySQLAdapter;
 use mstodulski\database\OrmService;
-use Symfony\Component\Yaml\Yaml;
+
+function getConfig() : array
+{
+    $config['dsn'] = 'mysql:host=localhost;port=3306;dbname=orm;charset=utf8;';
+    $config['user'] = 'root';
+    $config['password'] = null;
+    $config['entityConfigurationDir'] = 'tests/config/';
+    $config['migrationDir'] = 'tests/migrations/';
+    $config['fixtureDir'] = 'tests/fixtures/';
+    $config['mode'] = 'prod';
+    $config['sqlAdapterClass'] = 'mstodulski\database\MySQLAdapter';
+
+    return $config;
+}
 
 function deleteDir($dirPath)
 {
@@ -21,8 +33,8 @@ function deleteDir($dirPath)
     rmdir($dirPath);
 }
 
-$config = Yaml::parseFile('tests/config.yml');
-$mysqlAdapter = new MySQLAdapter();
+$config = getConfig();
+$mysqlAdapter = new $config['sqlAdapterClass']();
 
 if (is_dir(getcwd() . '/cache')) {
     deleteDir(getcwd() . '/cache');
@@ -56,21 +68,69 @@ foreach ($queries as $query) {
 $entityManager->turnOnCheckForeignKeys();
 
 $arguments = [];
-$arguments['1'] = 'tests/config.yml';
-$arguments['2'] = 'generate';
-$arguments['3'] = 'migration';
+$arguments[] = "bin/morm";
+$arguments[] = "-dsn";
+$arguments[] = $config['dsn'];
+$arguments[] = "-u";
+$arguments[] = $config['user'];
+if ($config['password'] != '') {
+    $arguments[] = "-p";
+    $arguments[] = $config['password'];
+}
+$arguments[] = "-cd";
+$arguments[] = $config['entityConfigurationDir'];
+$arguments[] = "-md";
+$arguments[] = $config['migrationDir'];
+$arguments[] = "-fd";
+$arguments[] = $config['fixtureDir'];
+$arguments[] = "-ac";
+$arguments[] = $config['sqlAdapterClass'];
+$arguments[] = "generate";
+$arguments[] = "migration";
 
 OrmService::route($arguments);
 
 $arguments = [];
-$arguments['1'] = 'tests/config.yml';
-$arguments['2'] = 'migrate';
+$arguments[] = "bin/morm";
+$arguments[] = "-dsn";
+$arguments[] = $config['dsn'];
+$arguments[] = "-u";
+$arguments[] = $config['user'];
+if ($config['password'] != '') {
+    $arguments[] = "-p";
+    $arguments[] = $config['password'];
+}
+$arguments[] = "-cd";
+$arguments[] = $config['entityConfigurationDir'];
+$arguments[] = "-md";
+$arguments[] = $config['migrationDir'];
+$arguments[] = "-fd";
+$arguments[] = $config['fixtureDir'];
+$arguments[] = "-ac";
+$arguments[] = $config['sqlAdapterClass'];
+$arguments[] = "migrate";
 
 OrmService::route($arguments);
 
 $arguments = [];
-$arguments['1'] = 'tests/config.yml';
-$arguments['2'] = 'import';
-$arguments['3'] = 'fixtures';
+$arguments[] = "bin/morm";
+$arguments[] = "-dsn";
+$arguments[] = $config['dsn'];
+$arguments[] = "-u";
+$arguments[] = $config['user'];
+if ($config['password'] != '') {
+    $arguments[] = "-p";
+    $arguments[] = $config['password'];
+}
+$arguments[] = "-cd";
+$arguments[] = $config['entityConfigurationDir'];
+$arguments[] = "-md";
+$arguments[] = $config['migrationDir'];
+$arguments[] = "-fd";
+$arguments[] = $config['fixtureDir'];
+$arguments[] = "-ac";
+$arguments[] = $config['sqlAdapterClass'];
+$arguments[] = "import";
+$arguments[] = "fixtures";
 
 OrmService::route($arguments);

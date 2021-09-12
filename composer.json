@@ -4,11 +4,9 @@
     "require": {
 		"php": ">=8.0",
 		"phpunit/phpunit": "9.5.*",
-		"symfony/var-dumper": "5.2.x-dev",
-		"ext-pdo": "*",
-		"symfony/yaml": "^5.3",
 		"mstodulski/cache": "*",
-		"nikic/php-parser": "^4.11"
+		"nikic/php-parser": "^4.11",
+		"ext-pdo": "*"
 	},
 	"repositories": [
 		{
