@@ -1,5 +1,5 @@
 <?php
-namespace app\admin;
+namespace test\orm\helpers;
 
 class EntityTwo
 {

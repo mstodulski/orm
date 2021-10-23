@@ -1,4 +1,4 @@
-entity: app\admin\User
+entity: test\orm\helpers\User
 repository: mstodulski\database\Repository
 fields:
   id:

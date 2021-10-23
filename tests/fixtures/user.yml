@@ -1,7 +1,7 @@
 fixture:
   fixtureOrder: 1
-  class: app\admin\User
-  factoryClass: app\admin\UserMigrationFactory
+  class: test\orm\helpers\User
+  factoryClass: test\orm\helpers\UserMigrationFactory
   records:
     -
       id: 1

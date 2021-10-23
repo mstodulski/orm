@@ -1,11 +1,13 @@
 {
-	"name": "mstodulski/orm",
+	"name": "mstodulski/morm",
+	"license": "MIT",
 	"description": "",
-    "require": {
+	"require": {
 		"php": ">=8.0",
 		"phpunit/phpunit": "9.5.*",
-		"mstodulski/cache": "*",
+		"mstodulski/cache": "1.0.0",
 		"nikic/php-parser": "^4.11",
+		"symfony/yaml": "5.3.*",
 		"ext-pdo": "*"
 	},
 	"repositories": [
@@ -14,14 +16,21 @@
 			"url": "git@github.com:mstodulski/cache.git"
 		}
 	],
+	"keywords": ["library", "orm", "db", "database"],
+	"homepage": "https://devsprint.pl",
+	"authors": [
+		{
+			"name": "Marcin Stodulski",
+			"homepage": "https://devsprint.pl",
+			"role": "Developer"
+		}
+	],
 	"autoload": {
 		"psr-4": {
 			"mstodulski\\database\\": "src",
-			"app\\admin\\": "tests/helpers"
+			"test\\orm\\helpers\\": "tests/helpers"
+
 		}
 	},
-	"bin": ["bin/morm"],
-  	"require-dev": {
-        "ext-apcu": "*"
- 	}
+	"bin": ["bin/morm"]
 }

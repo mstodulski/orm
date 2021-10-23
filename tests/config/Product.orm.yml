@@ -1,4 +1,4 @@
-entity: app\admin\Product
+entity: test\orm\helpers\Product
 repository: mstodulski\database\Repository
 fields:
   id:
@@ -7,12 +7,12 @@ fields:
     extra: auto_increment
   FK_Usr_createdBy:
     type: entity
-    entityClass: app\admin\User
+    entityClass: test\orm\helpers\User
   createdAt:
     type: datetime
   FK_Usr_updatedBy:
     type: entity
-    entityClass: app\admin\User
+    entityClass: test\orm\helpers\User
     lazy: false
     nullable: true
   updatedAt:
@@ -36,19 +36,19 @@ fields:
     nullable: true
   features:
     type: collection
-    entityClass: app\admin\Feature
+    entityClass: test\orm\helpers\Feature
     joiningField: FK_Pro_product
   prices:
     type: collection
-    entityClass: app\admin\Price
+    entityClass: test\orm\helpers\Price
     joiningField: FK_Pro_product
     lazy: false
   entityOne:
     type: entity
-    entityClass: app\admin\EntityOne
+    entityClass: test\orm\helpers\EntityOne
   entityTwo:
     type: entity
-    entityClass: app\admin\EntityTwo
+    entityClass: test\orm\helpers\EntityTwo
     nullable: true
   date:
     type: date
@@ -62,9 +62,9 @@ foreignKeys:
     columnName: 'entityOne'
     referencedColumnName: 'id'
 lifecycle:
-  preRemove: app\admin\ProductEventService::preRemoveEvent
-  postRemove: app\admin\ProductEventService::postRemoveEvent
-  preUpdate: app\admin\ProductEventService::preUpdateEvent
-  postUpdate: app\admin\ProductEventService::postUpdateEvent
-  postLoad: app\admin\ProductEventService::postLoadEvent
-  postCreate: app\admin\ProductEventService::postCreateEvent
+  preRemove: test\orm\helpers\ProductEventService::preRemoveEvent
+  postRemove: test\orm\helpers\ProductEventService::postRemoveEvent
+  preUpdate: test\orm\helpers\ProductEventService::preUpdateEvent
+  postUpdate: test\orm\helpers\ProductEventService::postUpdateEvent
+  postLoad: test\orm\helpers\ProductEventService::postLoadEvent
+  postCreate: test\orm\helpers\ProductEventService::postCreateEvent

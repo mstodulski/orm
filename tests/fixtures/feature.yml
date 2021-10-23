@@ -1,7 +1,7 @@
 fixture:
   fixtureOrder: 5
-  class: app\admin\Feature
-  factoryClass: app\admin\FeatureMigrationFactory
+  class: test\orm\helpers\Feature
+  factoryClass: test\orm\helpers\FeatureMigrationFactory
   records:
     -
       id: 1

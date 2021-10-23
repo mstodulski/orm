@@ -1,5 +1,5 @@
 <?php
-namespace app\admin;
+namespace test\orm\helpers;
 
 use DateTime;
 use JetBrains\PhpStorm\Pure;
@@ -20,7 +20,7 @@ class Product
     public ?float $weight;
     private Collection|LazyCollection $features;
     private Collection|LazyCollection $prices;
-    private \app\admin\EntityOne $entityOne;
+    private \test\orm\helpers\EntityOne $entityOne;
     private ?EntityTwo $entityTwo;
     /** @var ?DateTime */
     private ?DateTime $date;
@@ -141,7 +141,7 @@ class Product
         $this->prices = $prices;
     }
 
-    public function getEntityOne(): \app\admin\EntityOne
+    public function getEntityOne(): \test\orm\helpers\EntityOne
     {
         return $this->entityOne;
     }

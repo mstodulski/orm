@@ -1,7 +1,7 @@
 fixture:
   fixtureOrder: 2
-  class: app\admin\EntityOne
-  factoryClass: app\admin\EntityOneMigrationFactory
+  class: test\orm\helpers\EntityOne
+  factoryClass: test\orm\helpers\EntityOneMigrationFactory
   records:
     -
       id: 1

@@ -1,13 +1,13 @@
 <?php
 
-use app\admin\EntityOne;
-use app\admin\EntityTwo;
-use app\admin\EntityWithoutConfiguration;
-use app\admin\EntityZero;
-use app\admin\Feature;
-use app\admin\Price;
-use app\admin\Product;
-use app\admin\User;
+use test\orm\helpers\EntityOne;
+use test\orm\helpers\EntityTwo;
+use test\orm\helpers\EntityWithoutConfiguration;
+use test\orm\helpers\EntityZero;
+use test\orm\helpers\Feature;
+use test\orm\helpers\Price;
+use test\orm\helpers\Product;
+use test\orm\helpers\User;
 use JetBrains\PhpStorm\NoReturn;
 use mstodulski\database\Collection;
 use mstodulski\database\EntityManager;
@@ -74,8 +74,8 @@ class Test extends TestCase
         $featuresValue = $featuresReflectionProperty->getValue($product);
         $pricesValue = $pricesReflectionProperty->getValue($product);
 
-        $this->assertIsBool(get_class($fkUsrCreatedByValue) === 'mstodulski\orm\proxy\app\admin\User');
-        $this->assertIsBool(get_class($fkUsrUpdatedByValue) === 'mstodulski\orm\proxy\app\admin\User');
+        $this->assertIsBool(get_class($fkUsrCreatedByValue) === 'mstodulski\orm\proxy\test\orm\helpers\User');
+        $this->assertIsBool(get_class($fkUsrUpdatedByValue) === 'mstodulski\orm\proxy\test\orm\helpers\User');
         $this->assertIsBool(get_class($featuresValue) === 'mstodulski\database\LazyCollection ');
         $this->assertIsBool(get_class($pricesValue) === 'mstodulski\database\Collection');
 
@@ -132,7 +132,7 @@ class Test extends TestCase
         $product = $this->entityManager->find(Product::class, 11);
 
         $this->assertEquals('user 1', $product->getFK_Usr_createdBy()->getName());
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(0, $product->getFeatures()->getRecordsCount());
         $this->assertEquals(0, $product->getPrices()->getRecordsCount());
@@ -160,7 +160,7 @@ class Test extends TestCase
         /** @var Product $product */
         $product = $this->entityManager->find(Product::class, 12);
 
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertEquals('Użytkownik testowy xyz', $product->getFK_Usr_createdBy()->getName());
         $this->assertNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(0, $product->getFeatures()->getRecordsCount());
@@ -192,9 +192,9 @@ class Test extends TestCase
         /** @var Product $product */
         $product = $this->entityManager->find(Product::class, 13);
 
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertEquals('Użytkownik tworzący', $product->getFK_Usr_createdBy()->getName());
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_updatedBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_updatedBy()));
         $this->assertEquals('Użytkownik aktualizujący', $product->getFK_Usr_updatedBy()->getName());
         $this->assertNotNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(0, $product->getFeatures()->getRecordsCount());
@@ -227,9 +227,9 @@ class Test extends TestCase
         /** @var Product $product */
         $product = $this->entityManager->find(Product::class, 14);
 
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertEquals('Apdacja użytkownika tworzącego', $product->getFK_Usr_createdBy()->getName());
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_updatedBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_updatedBy()));
         $this->assertEquals('Użytkownik aktualizujący 2', $product->getFK_Usr_updatedBy()->getName());
         $this->assertNotNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(0, $product->getFeatures()->getRecordsCount());
@@ -280,9 +280,9 @@ class Test extends TestCase
         /** @var Product $product */
         $product = $this->entityManager->find(Product::class, 15);
 
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertEquals('Apdacja użytkownika tworzącego', $product->getFK_Usr_createdBy()->getName());
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_updatedBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_updatedBy()));
         $this->assertEquals('Użytkownik aktualizujący 333', $product->getFK_Usr_updatedBy()->getName());
         $this->assertNotNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(2, $product->getFeatures()->getRecordsCount());
@@ -355,9 +355,9 @@ class Test extends TestCase
         /** @var Product $product */
         $product = $this->entityManager->find(Product::class, 16);
 
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_createdBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_createdBy()));
         $this->assertEquals('Apdacja użytkownika tworzącego', $product->getFK_Usr_createdBy()->getName());
-        $this->assertEquals('mstodulski\orm\proxy\app\admin\User', get_class($product->getFK_Usr_updatedBy()));
+        $this->assertEquals('mstodulski\orm\proxy\test\orm\helpers\User', get_class($product->getFK_Usr_updatedBy()));
         $this->assertEquals('Użytkownik aktualizujący 4444', $product->getFK_Usr_updatedBy()->getName());
         $this->assertNotNull($product->getFK_Usr_updatedBy());
         $this->assertEquals(2, $product->getFeatures()->getRecordsCount());
@@ -1150,7 +1150,7 @@ class Test extends TestCase
 
     public function testMigration1()
     {
-        $entityZeroOrmFile['entity'] = 'app\admin\EntityZero';
+        $entityZeroOrmFile['entity'] = 'test\orm\helpers\EntityZero';
         $entityZeroOrmFile['repository'] = 'mstodulski\database\Repository';
         $entityZeroOrmFile['fields']['id']['type'] = 'int';
         $entityZeroOrmFile['fields']['id']['id'] = true;
@@ -1220,8 +1220,8 @@ class Test extends TestCase
     public function testMigration2()
     {
         $entityZeroFixture['fixture']['fixtureOrder'] = '3';
-        $entityZeroFixture['fixture']['class'] = 'app\admin\EntityZero';
-        $entityZeroFixture['fixture']['factoryClass'] = 'app\admin\EntityZeroMigrationFactory';
+        $entityZeroFixture['fixture']['class'] = 'test\orm\helpers\EntityZero';
+        $entityZeroFixture['fixture']['factoryClass'] = 'test\orm\helpers\EntityZeroMigrationFactory';
         $record['id'] = 1;
         $record['name'] = 'encja 0 1';
         $entityZeroFixture['fixture']['records'][] = $record;
@@ -1328,7 +1328,7 @@ class Test extends TestCase
     {
         $entityZeroOrmFile = Yaml::parseFile($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml');
         $entityZeroOrmFile['fields']['entityTwo']['type'] = 'entity';
-        $entityZeroOrmFile['fields']['entityTwo']['entityClass'] = 'app\admin\EntityTwo';
+        $entityZeroOrmFile['fields']['entityTwo']['entityClass'] = 'test\orm\helpers\EntityTwo';
         $entityZeroOrmFile['fields']['entityTwo']['nullable'] = true;
         $entityZeroOrmFile['fields']['entityTwo']['lazy'] = false;
 

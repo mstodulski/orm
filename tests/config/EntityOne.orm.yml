@@ -1,4 +1,4 @@
-entity: app\admin\EntityOne
+entity: test\orm\helpers\EntityOne
 repository: mstodulski\database\Repository
 fields:
   id:

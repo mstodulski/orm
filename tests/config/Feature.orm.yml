@@ -1,4 +1,4 @@
-entity: app\admin\Feature
+entity: test\orm\helpers\Feature
 repository: mstodulski\database\Repository
 fields:
   id:
@@ -7,12 +7,12 @@ fields:
     extra: auto_increment
   FK_Usr_createdBy:
     type: entity
-    entityClass: app\admin\User
+    entityClass: test\orm\helpers\User
   createdAt:
     type: datetime
   FK_Usr_updatedBy:
     type: entity
-    entityClass: app\admin\User
+    entityClass: test\orm\helpers\User
     lazy: false
     nullable: true
   updatedAt:
@@ -25,7 +25,7 @@ fields:
     nullable: true
   FK_Pro_product:
     type: entity
-    entityClass: app\admin\Product
+    entityClass: test\orm\helpers\Product
 foreignKeys:
   -
     columnName: 'FK_Pro_product'
@@ -33,5 +33,5 @@ foreignKeys:
     updateRule: 'CASCADE'
     deleteRule: 'CASCADE'
 lifecycle:
-#  postLoad: app\admin\ProductEventService::postLoadEventProductFeature
-#  postCreate: app\admin\ProductEventService::postCreateEventProductFeature
+#  postLoad: test\orm\helpers\ProductEventService::postLoadEventProductFeature
+#  postCreate: test\orm\helpers\ProductEventService::postCreateEventProductFeature

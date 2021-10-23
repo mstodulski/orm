@@ -1,7 +1,7 @@
 fixture:
   fixtureOrder: 6
-  class: app\admin\Price
-  factoryClass: app\admin\PriceMigrationFactory
+  class: test\orm\helpers\Price
+  factoryClass: test\orm\helpers\PriceMigrationFactory
   records:
     -
       id: 1

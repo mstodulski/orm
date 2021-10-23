@@ -1,7 +1,7 @@
 fixture:
   fixtureOrder: 4
-  class: app\admin\Product
-  factoryClass: app\admin\ProductMigrationFactory
+  class: test\orm\helpers\Product
+  factoryClass: test\orm\helpers\ProductMigrationFactory
   records:
     -
       id: 1

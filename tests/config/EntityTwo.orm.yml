@@ -1,4 +1,4 @@
-entity: app\admin\EntityTwo
+entity: test\orm\helpers\EntityTwo
 repository: mstodulski\database\Repository
 fields:
   id:
