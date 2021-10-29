@@ -1161,7 +1161,7 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1184,7 +1184,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1250,7 +1250,7 @@ class Test extends TestCase
         $this->entityManager->turnOnCheckForeignKeys();
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1273,7 +1273,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1295,7 +1295,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1336,7 +1336,7 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1359,7 +1359,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1408,7 +1408,7 @@ class Test extends TestCase
         file_put_contents($this->config['entityConfigurationDir'] . 'EntityZero.orm.yml', $content);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1431,7 +1431,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1471,7 +1471,7 @@ class Test extends TestCase
         }
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";
@@ -1494,7 +1494,7 @@ class Test extends TestCase
         OrmService::route($arguments);
 
         $arguments = [];
-        $arguments[] = "bin/morm";
+        $arguments[] = "bin/orm";
         $arguments[] = "-dsn";
         $arguments[] = $this->config['dsn'];
         $arguments[] = "-u";

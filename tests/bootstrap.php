@@ -68,7 +68,7 @@ foreach ($queries as $query) {
 $entityManager->turnOnCheckForeignKeys();
 
 $arguments = [];
-$arguments[] = "bin/morm";
+$arguments[] = "bin/orm";
 $arguments[] = "-dsn";
 $arguments[] = $config['dsn'];
 $arguments[] = "-u";
@@ -91,7 +91,7 @@ $arguments[] = "migration";
 OrmService::route($arguments);
 
 $arguments = [];
-$arguments[] = "bin/morm";
+$arguments[] = "bin/orm";
 $arguments[] = "-dsn";
 $arguments[] = $config['dsn'];
 $arguments[] = "-u";
@@ -113,7 +113,7 @@ $arguments[] = "migrate";
 OrmService::route($arguments);
 
 $arguments = [];
-$arguments[] = "bin/morm";
+$arguments[] = "bin/orm";
 $arguments[] = "-dsn";
 $arguments[] = $config['dsn'];
 $arguments[] = "-u";
