@@ -19,7 +19,7 @@ class OrmService
     const TABLE_FOREIGN_KEY_PREFIX = 'fk_';
     const MIGRATION_TABLE_NAME = 'orm_migrations';
 
-    private static EntityManager $entityManager;
+    public static EntityManager $entityManager;
 
     private static array $tableDefaultsSchema = [
         'encoding' => 'utf8',
@@ -253,7 +253,7 @@ class OrmService
         return [$config, $arguments];
     }
 
-    private static function importAction(array $config, array $arguments)
+    public static function importAction(array $config, array $arguments)
     {
         switch ($arguments[2]) {
             case 'fixtures':
@@ -301,7 +301,7 @@ class OrmService
         echo('import fixtures OK');
     }
 
-    private static function generateAction(array $config, array $arguments)
+    public static function generateAction(array $config, array $arguments)
     {
         switch ($arguments[2]) {
             case 'migration':
@@ -315,7 +315,7 @@ class OrmService
         }
     }
 
-    private static function migrateAction(array $config) : void
+    public static function migrateAction(array $config) : void
     {
         $dbName = self::$entityManager->getDsnValue('dbname');
         $checkQuery = /** @lang */'SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = "' . $dbName . '") AND (TABLE_NAME = "' . self::MIGRATION_TABLE_NAME . '")';

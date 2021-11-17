@@ -32,7 +32,7 @@ class LazyEntity {
             }
         }
 
-        if ($fieldValue->___orm_initialized) {
+        if (isset($fieldValue->___orm_initialized) && ($fieldValue->___orm_initialized)) {
             if (($fieldClassProperty !== null) && ($fieldClassPropertyVisibilityLevel !== null)) {
                 ObjectMapper::setOriginalAccessibility($fieldClassProperty, $fieldClassPropertyVisibilityLevel);
             }
@@ -52,19 +52,24 @@ class LazyEntity {
                     $visibilityLevel = ObjectMapper::setFieldAccessible($classProperty);
                     $objectId = $classProperty->getValue($fieldValue);
 
-                    $propertyObject = $entityManager->find(get_class($fieldValue), $objectId);
+                    if ($objectId === null) {
+                        return $fieldValue;
+                    } else {
 
-                    if ($propertyObject !== null) {
-                        $fieldClassProperty->setValue($object, $propertyObject);
+                        $propertyObject = $entityManager->find(get_class($fieldValue), $objectId);
+
+                        if ($propertyObject !== null) {
+                            $fieldClassProperty->setValue($object, $propertyObject);
+                        }
+
+                        if (($fieldClassProperty !== null) && ($fieldClassPropertyVisibilityLevel !== null)) {
+                            ObjectMapper::setOriginalAccessibility($fieldClassProperty, $fieldClassPropertyVisibilityLevel);
+                        }
+
+                        ObjectMapper::setOriginalAccessibility($classProperty, $visibilityLevel);
+
+                        return $propertyObject;
                     }
-
-                    if (($fieldClassProperty !== null) && ($fieldClassPropertyVisibilityLevel !== null)) {
-                        ObjectMapper::setOriginalAccessibility($fieldClassProperty, $fieldClassPropertyVisibilityLevel);
-                    }
-
-                    ObjectMapper::setOriginalAccessibility($classProperty, $visibilityLevel);
-
-                    return $propertyObject;
                 }
             }
         }
