@@ -403,7 +403,10 @@ class OrmService
                 mkdir($config['migrationDir'], 0777, true);
             }
 
-            file_put_contents($config['migrationDir'] . DIRECTORY_SEPARATOR . $migrationClassName . '.php', $fileContent);
+            $fileName = $config['migrationDir'] . DIRECTORY_SEPARATOR . $migrationClassName . '.php';
+            file_put_contents($fileName, $fileContent);
+
+            echo 'Migrations created, file ' . $fileName;
         } else {
             echo 'Db structure is up to date. No migrations created.';
         }

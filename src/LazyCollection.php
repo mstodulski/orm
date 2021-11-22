@@ -52,6 +52,7 @@ class LazyCollection {
 
         $visibilityLevel = ObjectMapper::setFieldAccessible($fieldProperty);
         $fieldProperty->setValue($this->parent, $collection);
+
         ObjectMapper::setOriginalAccessibility($fieldProperty, $visibilityLevel);
 
         return $collection;

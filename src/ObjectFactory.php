@@ -179,9 +179,12 @@ class ObjectFactory {
                         }
                     } elseif ($oldMethod->getReturnType() instanceof UnionType) {
                         foreach ($oldMethod->getReturnType()->types as $type) {
-                            $className = $currentNamespace . '\\' . implode('\\', $type->parts);
-                            if (class_exists($className)) {
-                                $returnTypeObjectClasses[md5($className)] = $className;
+                            if (isset($type->parts)) {
+
+                                $className = $currentNamespace . '\\' . implode('\\', $type->parts);
+                                if (class_exists($className)) {
+                                    $returnTypeObjectClasses[md5($className)] = $className;
+                                }
                             }
                         }
                     } elseif ($oldMethod->getReturnType() instanceof NullableType) {
@@ -191,6 +194,8 @@ class ObjectFactory {
                                 $returnTypeObjectClasses[md5($className)] = $className;
                             }
                         }
+                    } elseif ($oldMethod->getReturnType()->name === 'array') {
+
                     } else {
                         throw new Exception('Unknown return type on field ' . $fieldToOverwrite);
                     }

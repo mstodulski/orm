@@ -78,9 +78,9 @@ class QueryConditionOperator {
         return $field . ' IS NOT NULL ';
     }
 
-    public static function in($field, $parameterName): string
+    public static function in($field, $parameterValue): string
     {
-        return $field . ' IN ("' . implode('", "', $parameterName) . '") ';
+        return $field . ' IN ("' . implode('", "', $parameterValue) . '") ';
     }
 
     public static function notIn($field, $parameterName): string

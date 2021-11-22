@@ -162,7 +162,13 @@ class EntityManager
         if (!empty($parameters)) {
             $queryCondition = new QueryCondition();
             foreach ($parameters as $field => $value) {
-                $partialQueryCondition = new QueryCondition($field . ' = :' . $field, $value);
+
+                if (is_array($value)) {
+                    $partialQueryCondition = new QueryCondition(QueryConditionOperator::in($field, $value));
+                } else {
+                    $partialQueryCondition = new QueryCondition($field . ' = :' . $field, $value);
+                }
+
                 $queryCondition->addCondition($partialQueryCondition, QueryCondition::AND_OPERATOR);
             }
 
@@ -170,6 +176,7 @@ class EntityManager
         }
 
         $query = $adapter->getSelectQuery($queryBuilder);
+
         $parameters = [];
         /** @var QueryCondition $queryCondition */
         foreach ($queryBuilder->getWhere() as $queryCondition) {
