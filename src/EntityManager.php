@@ -24,8 +24,10 @@ class EntityManager
     private string $entityConfigurationDir;
     private string $mode;
     private array $entitiesToSave = [];
+    private array $collectionEntitiesToSave = [];
     private array $entitiesToRemove = [];
     private array $classesConfigurations = [];
+    private array $priorityArray = [];
 
     public static ?DbAdapterInterface $dbAdapter;
     private static array $config;
@@ -39,7 +41,7 @@ class EntityManager
 
         $entityManager = new self();
 
-        $entityManager->dbConnection = new DBConnection(self::$dbAdapter, self::$config['dsn'], self::$config['user'], self::$config['password']);
+        $entityManager->dbConnection = new DBConnection(self::$dbAdapter, self::$config['dsn'], self::$config['user'], self::$config['password'], $entityManager);
         $entityManager->entityConfigurationDir = (isset(self::$config['entityConfigurationDir'])) ? self::$config['entityConfigurationDir'] : '';
         $entityManager->mode = (isset(self::$config['mode'])) ? self::$config['mode'] : 'prod';
 
@@ -56,7 +58,7 @@ class EntityManager
             throw new Exception('Please use create() method with configuration arguments');
         }
 
-        $this->dbConnection = new DBConnection(self::$dbAdapter, self::$config['dsn'], self::$config['user'], self::$config['password']);
+        $this->dbConnection = new DBConnection(self::$dbAdapter, self::$config['dsn'], self::$config['user'], self::$config['password'], $this);
         $this->entityConfigurationDir = (isset(self::$config['entityConfigurationDir'])) ? self::$config['entityConfigurationDir'] : '';
         $this->mode = (isset(self::$config['mode'])) ? self::$config['mode'] : 'prod';
     }
@@ -412,13 +414,18 @@ class EntityManager
         }
     }
 
-    private function findObjectPropertiesForObjectToFlush()
+    private function findObjectPropertiesForObjectToFlush(array $objectArray, int $depth = 1)
     {
         $additionalObjectsToFlush = [];
+        $additionalCollectionObjectToFlush = [];
         $additionalObjectToRemove = [];
 
-        foreach ($this->entitiesToSave as $entityIndex => $entityToSave)
+        foreach ($objectArray as $entityIndex => $entityToSave)
         {
+            if (!isset($this->priorityArray[spl_object_id($entityToSave)])) {
+                $this->priorityArray[spl_object_id($entityToSave)] = 0;
+            }
+
             $classConfiguration = $this->loadClassConfiguration(get_class($entityToSave));
             $entityOrCollectionFields = ObjectFactory::filterFieldsByType($classConfiguration['fields'], ['entity', 'collection']);
             $idFieldParent = ObjectMapper::getIdFieldName($classConfiguration);
@@ -475,7 +482,6 @@ class EntityManager
                         }
                     }
 
-
                     foreach ($object as $collectionElement) {
                         $collectionElementProperties = [];
                         ObjectMapper::getClassProperties(get_class($collectionElement), $collectionElementProperties, [$fieldData['joiningField'], $idFieldCollectionElement]);
@@ -499,6 +505,7 @@ class EntityManager
                         ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $collectionElementIdVisiblility);
 
                         $this->addObjectToSaveEntityQueue($collectionElement, $entityIndex,$additionalObjectsToFlush, 'collectionElement');
+                        $this->priorityArray[spl_object_id($collectionElement)] = $depth;
                     }
 
                     if (count($allCollectionObjectsIds) > 0) {
@@ -509,12 +516,8 @@ class EntityManager
 
                 } elseif (is_object($object) && (get_class($object) != LazyCollection::class)) {
                     $this->addObjectToSaveEntityQueue($object, $entityIndex,$additionalObjectsToFlush, 'entity');
-//                } elseif (is_object($object) && (get_class($object) == LazyCollection::class)) {
-//                    //nothing to do
-//                    $this;
-//                } elseif (!isset($object)) {
-//                    //nothing to do
-//                    $this;
+                    $this->priorityArray[spl_object_id($object)] = $depth;
+                    $this->findObjectPropertiesForObjectToFlush([$object], ($depth + 1));
                 } elseif ((!(is_object($object) && (get_class($object) == LazyCollection::class))) and (isset($object))) {
                     throw new Exception('whats that?!!');
                 }
@@ -524,48 +527,69 @@ class EntityManager
         }
 
         $newEntitiesToSave = [];
+        $newCollectionEntitiesToSave = [];
+
         foreach ($this->entitiesToSave as $entityIndex => $entityToSave) {
             if (isset($additionalObjectsToFlush[$entityIndex]['entity'])) {
                 foreach ($additionalObjectsToFlush[$entityIndex]['entity'] as $entity) {
                     $newEntitiesToSave[spl_object_id($entity)] = $entity;
                 }
             }
-            $newEntitiesToSave[spl_object_id($entityToSave)] = $entityToSave;
+            //$newEntitiesToSave[spl_object_id($entityToSave)] = $entityToSave;
+
             if (isset($additionalObjectsToFlush[$entityIndex]['collectionElement'])) {
                 foreach ($additionalObjectsToFlush[$entityIndex]['collectionElement'] as $entity) {
-                    $newEntitiesToSave[spl_object_id($entity)] = $entity;
+                    $newCollectionEntitiesToSave[spl_object_id($entity)] = $entity;
                 }
             }
         }
 
-        $this->entitiesToSave = $newEntitiesToSave;
-        $this->entitiesToRemove = array_merge($this->entitiesToRemove, $additionalObjectToRemove);
-    }
+        $entToSave = $this->entitiesToSave;
+        $this->entitiesToSave = [];
+        foreach ($newEntitiesToSave as $entity) {
+            $this->entitiesToSave[] = $entity;
+        }
 
-//    public function addMigrationRecords()
-//    {
-//        $this->findObjectPropertiesForObjectToFlush();
-//        $this->dbConnection->beginTransaction();
-//
-//        foreach ($this->entitiesToSave as $entity) {
-//            $this->addMigrationEntity($entity);
-//        }
-//
-//        $this->dbConnection->commitTransaction();
-//    }
+        foreach ($entToSave as $entity) {
+            $this->entitiesToSave[] = $entity;
+        }
+
+        $this->collectionEntitiesToSave = array_unique(array_merge($this->entitiesToRemove, $newCollectionEntitiesToSave), SORT_REGULAR);
+        $this->entitiesToRemove = array_unique(array_merge($this->entitiesToRemove, $additionalObjectToRemove), SORT_REGULAR);
+    }
 
     public function flush()
     {
-        $this->findObjectPropertiesForObjectToFlush();
+        $this->findObjectPropertiesForObjectToFlush($this->entitiesToSave);
+
+        $entitiesToSave = [];
+        arsort($this->priorityArray);
+        foreach ($this->priorityArray as $splObjectId => $priority) {
+            foreach ($this->entitiesToSave as $entity) {
+                if (spl_object_id($entity) == $splObjectId) {
+                    $entitiesToSave[spl_object_id($entity)] = $entity;
+                    break;
+                }
+            }
+        }
+
+        foreach ($this->collectionEntitiesToSave as $entity) {
+            $entitiesToSave[spl_object_id($entity)] = $entity;
+        }
+
+        $entitiesToRemove = [];
+        foreach ($this->entitiesToRemove as $entity) {
+            $entitiesToRemove[spl_object_id($entity)] = $entity;
+        }
 
         $this->dbConnection->beginTransaction();
 
         try {
-            foreach ($this->entitiesToSave as $entity) {
+            foreach ($entitiesToSave as $entity) {
                 $this->saveEntity($entity);
             }
 
-            foreach ($this->entitiesToRemove as $entity) {
+            foreach ($entitiesToRemove as $entity) {
                 $this->removeEntity($entity);
             }
 

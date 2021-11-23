@@ -20,8 +20,9 @@ class DBConnection
 {
     private PDO $connection;
     private DbAdapterInterface $dbAdapter;
+    private EntityManager $entityManager;
 
-    public function __construct(DbAdapterInterface $dbAdapter, string $dsn, string $user, string $password = null)
+    public function __construct(DbAdapterInterface $dbAdapter, string $dsn, string $user, string $password = null, EntityManager $entityManager)
     {
         $this->dbAdapter = $dbAdapter;
 
@@ -32,11 +33,11 @@ class DBConnection
         ];
 
         $this->connection = new PDO($dsn, $user, $password, $options);
+        $this->entityManager = $entityManager;
     }
 
     public function bindParameters(string $query, array $parameters = []) : PDOStatement
     {
-        $entityManager = new EntityManager();
         $statement = $this->connection->prepare($query);
 
         foreach ($parameters as $parameter) {
@@ -45,7 +46,7 @@ class DBConnection
                 if ($parameter['value'] instanceof DateTime) {
                     $statement->bindValue($parameter['name'], $parameter['value']->format('Y-m-d H:i:s'), $parameter['type']);
                 } else {
-                    $fieldObjectConfiguration = $entityManager->loadClassConfiguration(get_class($parameter['value']));
+                    $fieldObjectConfiguration = $this->entityManager->loadClassConfiguration(get_class($parameter['value']));
                     $idFieldName = ObjectMapper::getIdFieldName($fieldObjectConfiguration);
                     $classProperties = [];
                     ObjectMapper::getClassProperties(get_class($parameter['value']), $classProperties);
