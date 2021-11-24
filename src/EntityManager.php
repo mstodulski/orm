@@ -586,10 +586,18 @@ class EntityManager
 
         try {
             foreach ($entitiesToSave as $entity) {
+                if (!$this->dbConnection->checkIfTransactionStarted()) {
+                    throw new Exception('Transaction lost. You have probably made a "SELECT" query after transaction start.');
+                }
+
                 $this->saveEntity($entity);
             }
 
             foreach ($entitiesToRemove as $entity) {
+                if (!$this->dbConnection->checkIfTransactionStarted()) {
+                    throw new Exception('Transaction lost. You have probably made a "SELECT" query after transaction start.');
+                }
+
                 $this->removeEntity($entity);
             }
 
