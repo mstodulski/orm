@@ -44,7 +44,7 @@ class OrmService
 
     private static array $tableIndexSchema = [
         'keyName' => null,
-        'nonUnique' => '1',
+        'nonUnique' => 1,
         'packed' => null,
         'indexType' => 'BTREE',
         'fields' => [],
@@ -298,7 +298,7 @@ class OrmService
 
         self::$entityManager->turnOnCheckForeignKeys();
 
-        echo('import fixtures OK');
+        echo 'Fixtures import status: OK' . PHP_EOL;
     }
 
     public static function generateAction(array $config, array $arguments)
@@ -352,7 +352,7 @@ class OrmService
             }
         }
 
-        echo('migrate OK');
+        echo 'Migration status: OK' . PHP_EOL;
     }
 
     private static function generateMigrationAction(array $config) : void
@@ -386,7 +386,16 @@ class OrmService
         $migrationQueries = array_merge($migrationQueries, self::getQueriesForUpdateForeignKeys($foreignKeysToUpdate));
 
         if (!empty($migrationQueries)) {
-            $migrationClassName = 'Migration' . time();
+
+            $currentTime = microtime();
+            $currentTime = explode(' ', $currentTime);
+            $miliseconds = explode('.', $currentTime[0]);
+            $miliseconds = substr($miliseconds[1], 0, 3);
+            $migrationMark = $currentTime[1] . $miliseconds;
+
+            $migrationClassName = 'Migration' . $migrationMark;
+
+
             $fileContent = '<?php' . PHP_EOL;
             $fileContent .= 'use mstodulski\database\AbstractMigration;' . PHP_EOL . PHP_EOL;
             $fileContent .= 'final class ' . $migrationClassName . ' extends AbstractMigration {' . PHP_EOL . PHP_EOL;
@@ -406,7 +415,7 @@ class OrmService
             $fileName = $config['migrationDir'] . DIRECTORY_SEPARATOR . $migrationClassName . '.php';
             file_put_contents($fileName, $fileContent);
 
-            echo 'Migrations created, file ' . $fileName;
+            echo 'Migrations created, file ' . str_replace('\\\\', '', $fileName) . PHP_EOL;
         } else {
             echo 'Db structure is up to date. No migrations created.';
         }
@@ -588,8 +597,15 @@ class OrmService
                     continue;
                 }
 
+                $dbFieldData = $dbTablesStructure[$ormTableName]['fields'][$ormFieldName];
+
+                if ($dbFieldData['precision'] === null) {
+                    unset($dbFieldData['precision']);
+                    unset($ormFieldData['precision']);
+                }
+
                 $ormFieldChecksum = md5(json_encode($ormFieldData));
-                $dbFieldChecksum = md5(json_encode($dbTablesStructure[$ormTableName]['fields'][$ormFieldName]));
+                $dbFieldChecksum = md5(json_encode($dbFieldData));
 
                 if ($ormFieldChecksum != $dbFieldChecksum) {
                     $fieldsToUpdate[$ormTableName][$ormFieldName] = $ormFieldData;
@@ -687,7 +703,7 @@ class OrmService
                 if (isset($fieldProperties['id']) && ($fieldProperties['id'] === true)) {
                     $primaryKey = self::$tableIndexSchema;
                     $primaryKey['keyName'] = 'PRIMARY';
-                    $primaryKey['nonUnique'] = '0';
+                    $primaryKey['nonUnique'] = 0;
                     $primaryKey['packed'] = null;
                     $primaryKey['indexType'] = 'BTREE';
                     $primaryKey['fields'] = ['id'];

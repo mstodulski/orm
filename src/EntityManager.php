@@ -125,7 +125,7 @@ class EntityManager
         return $queryBuilder;
     }
 
-    public function find(string $className, int $id, int $hydrationMode = HydrationMode::HYDRATION_OBJECT) : object|array|null
+    public function find(string $className, int $id, HydrationMode $hydrationMode = HydrationMode::Object) : object|array|null
     {
         $adapter = $this->dbConnection->getDbAdapter();
 
@@ -141,19 +141,18 @@ class EntityManager
         $row = $this->dbConnection->getSingleRow($query, $parameters);
 
         switch ($hydrationMode) {
-            case HydrationMode::HYDRATION_ARRAY:
+            case HydrationMode::Array:
                 return $row;
-            case HydrationMode::HYDRATION_OBJECT:
-
+            case HydrationMode::Object:
                 if ($row === null) {
                     return null;
                 } else {
                     $entity = ObjectFactory::create($className, $this);
                     return ObjectMapper::mapEntity($entity, $row, $this);
                 }
-            default:
-                throw new Exception('Unknown hydration mode.');
         }
+
+        throw new Exception('Unexpected error');
     }
 
     private function findRecords(string $className, array $parameters) : array
@@ -166,12 +165,12 @@ class EntityManager
             foreach ($parameters as $field => $value) {
 
                 if (is_array($value)) {
-                    $partialQueryCondition = new QueryCondition(QueryConditionOperator::in($field, $value));
+                    $partialQueryCondition = new QueryCondition(QueryConditionComparision::in($field, $value));
                 } else {
                     $partialQueryCondition = new QueryCondition($field . ' = :' . $field, $value);
                 }
 
-                $queryCondition->addCondition($partialQueryCondition, QueryCondition::AND_OPERATOR);
+                $queryCondition->addCondition($partialQueryCondition, QueryConditionOperator::And);
             }
 
             $queryBuilder->addWhere($queryCondition);
@@ -202,14 +201,14 @@ class EntityManager
         return $resultTable;
     }
 
-    public function findBy(string $className, array $parameters, int $hydrationMode = HydrationMode::HYDRATION_OBJECT) : array
+    public function findBy(string $className, array $parameters, HydrationMode $hydrationMode = HydrationMode::Object) : array
     {
         $table = $this->findRecords($className, $parameters);
 
         switch ($hydrationMode) {
-            case HydrationMode::HYDRATION_ARRAY:
+            case HydrationMode::Array:
                 return $table;
-            case HydrationMode::HYDRATION_OBJECT:
+            case HydrationMode::Object:
                 $resultTable = [];
 
                 foreach ($table as $row) {
@@ -218,9 +217,9 @@ class EntityManager
                 }
 
                 return $resultTable;
-            default:
-                throw new Exception('Unknown hydration mode.');
         }
+
+        throw new Exception('Unexpected error');
     }
 
     public function count(string $className, array $parameters) : int
@@ -232,7 +231,7 @@ class EntityManager
             $queryCondition = new QueryCondition();
             foreach ($parameters as $field => $value) {
                 $partialQueryCondition = new QueryCondition($field . ' = :' . $field, $value);
-                $queryCondition->addCondition($partialQueryCondition, QueryCondition::AND_OPERATOR);
+                $queryCondition->addCondition($partialQueryCondition, QueryConditionOperator::And);
             }
 
             $queryBuilder->addWhere($queryCondition);
@@ -417,7 +416,6 @@ class EntityManager
     private function findObjectPropertiesForObjectToFlush(array $objectArray, int $depth = 1)
     {
         $additionalObjectsToFlush = [];
-        $additionalCollectionObjectToFlush = [];
         $additionalObjectToRemove = [];
 
         foreach ($objectArray as $entityIndex => $entityToSave)

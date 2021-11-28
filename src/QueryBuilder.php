@@ -181,7 +181,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function getTableResult($hydrationMode = HydrationMode::HYDRATION_OBJECT): array
+    public function getTableResult(HydrationMode $hydrationMode = HydrationMode::Object): array
     {
         $dbAdapter = $this->entityManager->getDbConnection()->getDbAdapter();
         $query = $dbAdapter->getSelectQuery($this);
@@ -211,9 +211,9 @@ class QueryBuilder
         $table = $this->entityManager->getDbConnection()->getTable($query, $parameters);
 
         switch ($hydrationMode) {
-            case HydrationMode::HYDRATION_ARRAY:
+            case HydrationMode::Array:
                 return $table;
-            case HydrationMode::HYDRATION_OBJECT:
+            case HydrationMode::Object:
                 $resultTable = [];
 
                 foreach ($table as $row) {
@@ -222,9 +222,9 @@ class QueryBuilder
                 }
 
                 return $resultTable;
-            default:
-                throw new Exception('Unknown hydration mode.');
         }
+
+        throw new Exception('Unexpected error');
     }
 
     public function getCount(): int
@@ -264,7 +264,7 @@ class QueryBuilder
         return $this->entityManager->getDbConnection()->getValue($query, $parameters);
     }
 
-    public function getSingleResult($hydrationMode = HydrationMode::HYDRATION_OBJECT): array|object|null
+    public function getSingleResult(HydrationMode $hydrationMode = HydrationMode::Object): array|object|null
     {
         $dbAdapter = $this->entityManager->getDbConnection()->getDbAdapter();
         $query = $dbAdapter->getSelectQuery($this);
@@ -278,9 +278,9 @@ class QueryBuilder
         $row = $this->entityManager->getDbConnection()->getSingleRow($query, $parameters);
 
         switch ($hydrationMode) {
-            case HydrationMode::HYDRATION_ARRAY:
+            case HydrationMode::Array:
                 return $row;
-            case HydrationMode::HYDRATION_OBJECT:
+            case HydrationMode::Object:
 
                 if ($row === null) {
                     return null;
@@ -288,9 +288,9 @@ class QueryBuilder
                     $entity = ObjectFactory::create($this->className, $this->entityManager);
                     return ObjectMapper::mapEntity($entity, $row, $this->entityManager);
                 }
-            default:
-                throw new Exception('Unknown hydration mode.');
         }
+
+        throw new Exception('Unexpected error');
     }
 
     public function getValue(): ?string

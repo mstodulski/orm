@@ -12,14 +12,8 @@ namespace mstodulski\database;
 
 use Exception;
 
-class QueryCondition {
-
-    const OR_OPERATOR = 'OR';
-    const AND_OPERATOR = 'AND';
-
-    const CONDITION_KIND_CONDITION = 'condition';
-    const CONDITION_KIND_STRING = 'string';
-
+class QueryCondition
+{
     const PARAMETER_TYPE_STRING = 2; // \PDO::PARAM_STR
     const PARAMETER_TYPE_INT = 1; // \PDO::PARAM_INT
     const PARAMETER_TYPE_NULL = 0; // \PDO::PARAM_NULL
@@ -27,6 +21,8 @@ class QueryCondition {
 
     public array $conditions = [];
     public array $parameters = [];
+
+    //utworzyć nową klasę ParameterType i tam te wszystkie parametry, potem update ofc
 
     public function __construct(string $condition = null,
                                 mixed $parameterValue = null,
@@ -60,7 +56,7 @@ class QueryCondition {
             $this->conditions[] = [
                 'precedingOperator' => null,
                 'condition' => $condition,
-                'conditionKind' => self::CONDITION_KIND_STRING
+                'conditionKind' => QueryConditionKind::String
             ];
         }
 
@@ -85,7 +81,7 @@ class QueryCondition {
             $this->conditions[] = [
                 'precedingOperator' => $precedingOperator,
                 'condition' => $condition,
-                'conditionKind' => self::CONDITION_KIND_CONDITION
+                'conditionKind' => QueryConditionKind::Condition
             ];
 
             $this->parameters = array_merge($this->parameters, $condition->parameters);
@@ -93,7 +89,7 @@ class QueryCondition {
             $this->conditions[] = [
                 'precedingOperator' => $precedingOperator,
                 'condition' => $condition,
-                'conditionKind' => self::CONDITION_KIND_STRING
+                'conditionKind' => QueryConditionKind::String
             ];
         }
 

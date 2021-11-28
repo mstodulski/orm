@@ -87,13 +87,19 @@ class MySQLAdapter implements DbAdapterInterface
         $conditionString = '';
 
         foreach ($queryCondition->conditions as $condition) {
-            if ($condition['conditionKind'] == QueryCondition::CONDITION_KIND_CONDITION) {
+            $precendingOperator = match ($condition['precedingOperator']) {
+                QueryConditionOperator::And => 'AND',
+                QueryConditionOperator::Or => 'OR',
+                null => '',
+            };
+
+            if ($condition['conditionKind'] == QueryConditionKind::Condition) {
                 $conditionString = ($conditionString != '') ? ' (' . $conditionString . ') ' : $conditionString;
                 /** @var QueryCondition $conditionObj */
                 $conditionObj = $condition['condition'];
-                $conditionString .= $condition['precedingOperator'] . ' (' . $this->getConditionsQueryPart($conditionObj) . ') ';
-            } elseif ($condition['conditionKind'] == QueryCondition::CONDITION_KIND_STRING) {
-                $conditionString .= $condition['precedingOperator'] . ' ' . $condition['condition'] . ' ';
+                $conditionString .= $precendingOperator . ' (' . $this->getConditionsQueryPart($conditionObj) . ') ';
+            } elseif ($condition['conditionKind'] == QueryConditionKind::String) {
+                $conditionString .= $precendingOperator . ' ' . $condition['condition'] . ' ';
             }
         }
 
@@ -135,6 +141,7 @@ class MySQLAdapter implements DbAdapterInterface
     private function prepareWhere(QueryBuilder $queryBuilder) : string
     {
         $whereConditions = [];
+
         foreach ($queryBuilder->getWhere() as $whereCondition) {
             /** @var QueryCondition $whereCondition */
             $whereConditions[] = $this->getConditionsQueryPart($whereCondition);
@@ -295,9 +302,11 @@ class MySQLAdapter implements DbAdapterInterface
         $fields = [];
         foreach ($tableData['fields'] as $fieldName => $fieldData) {
             $type = $fieldData['type'];
-            if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
-            if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
-            if ($fieldData['precision'] !== null) $type .= ')';
+            if (isset($fieldData['precision'])) {
+                if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
+                if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
+                if ($fieldData['precision'] !== null) $type .= ')';
+            }
 
             $nullable = $fieldData['nullable'] ? ' NULL ' : ' NOT NULL ';
             $default = (($fieldData['defaultValue'] != null)
@@ -330,9 +339,11 @@ class MySQLAdapter implements DbAdapterInterface
     public function getQueryForCreateField(string $tableName, string $fieldName, array $fieldData) : string
     {
         $type = $fieldData['type'];
-        if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
-        if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
-        if ($fieldData['precision'] !== null) $type .= ')';
+        if (isset($fieldData['precision'])) {
+            if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
+            if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
+            if ($fieldData['precision'] !== null) $type .= ')';
+        }
 
         $nullable = $fieldData['nullable'] ? ' NULL ' : ' NOT NULL ';
         $default = (($fieldData['defaultValue'] != null)
@@ -355,9 +366,11 @@ class MySQLAdapter implements DbAdapterInterface
     public function getQueryForUpdateField(string $tableName, string $fieldName, array $fieldData) : string
     {
         $type = $fieldData['type'];
-        if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
-        if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
-        if ($fieldData['precision'] !== null) $type .= ')';
+        if (isset($fieldData['precision'])) {
+            if ($fieldData['precision'] !== null) $type .= '(' . $fieldData['precision'];
+            if (($fieldData['scale'] !== null) && ($fieldData['precision'] !== null)) $type .= ', ' . $fieldData['scale'];
+            if ($fieldData['precision'] !== null) $type .= ')';
+        }
 
         $nullable = '';
         if (isset($fieldData['nullable'])) {

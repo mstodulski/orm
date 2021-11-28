@@ -10,9 +10,8 @@
 
 namespace mstodulski\database;
 
-//https://www.php.net/releases/8.1/en.php
-
-enum HydrationMode {
-    case Object;
-    case Array;
+enum QueryConditionValueKind
+{
+    case Parameter;
+    case Value;
 }

@@ -1,5 +1,7 @@
 <?php
 
+use mstodulski\database\QueryConditionOperator;
+use mstodulski\database\QueryConditionValueKind;
 use test\orm\helpers\EntityOne;
 use test\orm\helpers\EntityTwo;
 use test\orm\helpers\EntityWithoutConfiguration;
@@ -16,7 +18,7 @@ use mstodulski\database\MySQLAdapter;
 use mstodulski\database\ObjectMapper;
 use mstodulski\database\OrmService;
 use mstodulski\database\QueryCondition;
-use mstodulski\database\QueryConditionOperator;
+use mstodulski\database\QueryConditionComparision;
 use mstodulski\database\QuerySorting;
 use mstodulski\database\Repository;
 use PHPUnit\Framework\TestCase;
@@ -517,7 +519,7 @@ class Test extends TestCase
     public function testProduct8()
     {
         $repository = $this->entityManager->createRepository(Product::class);
-        $products = $repository->findAll(HydrationMode::HYDRATION_ARRAY);
+        $products = $repository->findAll(HydrationMode::Array);
 
         /** @var Product $product */
         $product = $products[0];
@@ -546,7 +548,7 @@ class Test extends TestCase
     public function testProduct10()
     {
         $repository = $this->entityManager->createRepository(Product::class);
-        $products = $repository->findBy(['sortOrder' => 2, 'creatorBrowser' => 'Fajerfoks'], HydrationMode::HYDRATION_ARRAY);
+        $products = $repository->findBy(['sortOrder' => 2, 'creatorBrowser' => 'Fajerfoks'], HydrationMode::Array);
 
         /** @var Product $product */
         $product = $products[0];
@@ -691,16 +693,6 @@ class Test extends TestCase
         EntityManager::create($mysqlAdapter, $this->config);
     }
 
-    public function testEntityManager5()
-    {
-        /** @var Product $product1 */
-        $this->expectException(Exception::class);
-        $this->entityManager->find(Product::class, 2, 123);
-
-        $this->expectException(Exception::class);
-        $this->entityManager->findBy(Product::class, ['id' => 2], 123);
-    }
-
     public function testDbConnection1()
     {
         $dateTime = new DateTime();
@@ -794,7 +786,7 @@ class Test extends TestCase
         $conditionPriceJoin = new QueryCondition('p.id = pr.FK_Pro_product');
         $conditionPriceName = new QueryCondition('pr.name = :priceName', 'Detaliczna');
         $joinCondition->addCondition($conditionPriceJoin);
-        $joinCondition->addCondition($conditionPriceName, QueryCondition::AND_OPERATOR);
+        $joinCondition->addCondition($conditionPriceName, QueryConditionOperator::And);
 
         $qb
             ->addField('p.id')
@@ -812,7 +804,7 @@ class Test extends TestCase
             ->setLimit(100)
         ;
 
-        $products = $qb->getTableResult(HydrationMode::HYDRATION_ARRAY);
+        $products = $qb->getTableResult(HydrationMode::Array);
         $product = $products[0];
 
         $this->assertEquals(7, $product['id']);
@@ -834,15 +826,15 @@ class Test extends TestCase
         $where2 = new QueryCondition('p.id = :id2', 2);
         $where3 = new QueryCondition('p.id = :id3', 4);
         $whereCondition->addCondition($where1);
-        $whereCondition->addCondition($where2, QueryCondition::OR_OPERATOR);
-        $whereCondition->addCondition($where3, QueryCondition::OR_OPERATOR);
+        $whereCondition->addCondition($where2, QueryConditionOperator::Or);
+        $whereCondition->addCondition($where3, QueryConditionOperator::Or);
 
         $qb
             ->setSorting($querySorting)
             ->addWhere($whereCondition)
         ;
 
-        $products = $qb->getTableResult(HydrationMode::HYDRATION_ARRAY);
+        $products = $qb->getTableResult(HydrationMode::Array);
 
         $product1 = $products[0];
         $product3 = $products[2];
@@ -860,9 +852,9 @@ class Test extends TestCase
 
         $querySorting = new QuerySorting('p.id', QuerySorting::DIRECTION_RANDOM);
         $qb->setSorting($querySorting);
-        $product1 = $qb->getSingleResult(HydrationMode::HYDRATION_ARRAY);
-        $product2 = $qb->getSingleResult(HydrationMode::HYDRATION_ARRAY);
-        $product3 = $qb->getSingleResult(HydrationMode::HYDRATION_ARRAY);
+        $product1 = $qb->getSingleResult(HydrationMode::Array);
+        $product2 = $qb->getSingleResult(HydrationMode::Array);
+        $product3 = $qb->getSingleResult(HydrationMode::Array);
 
         $this->assertTrue(
             ($product1['id'] != $product2['id']) ||
@@ -885,14 +877,14 @@ class Test extends TestCase
         $where2 = new QueryCondition('p.id = :id2', 2);
         $where3 = new QueryCondition('p.id = :id3', 4);
         $whereCondition->addCondition($where1);
-        $whereCondition->addCondition($where2, QueryCondition::OR_OPERATOR);
-        $whereCondition->addCondition($where3, QueryCondition::OR_OPERATOR);
+        $whereCondition->addCondition($where2, QueryConditionOperator::Or);
+        $whereCondition->addCondition($where3, QueryConditionOperator::Or);
 
         $joinCondition = new QueryCondition();
         $conditionPriceJoin = new QueryCondition('p.id = pr.FK_Pro_product');
         $conditionPriceName = new QueryCondition('pr.name = :priceName', 'Detaliczna');
         $joinCondition->addCondition($conditionPriceJoin);
-        $joinCondition->addCondition($conditionPriceName, QueryCondition::AND_OPERATOR);
+        $joinCondition->addCondition($conditionPriceName, QueryConditionOperator::And);
 
         $qb
             ->setSorting($querySorting)
@@ -972,8 +964,8 @@ class Test extends TestCase
     public function testQueryCondition1()
     {
         $queryCondition = new QueryCondition();
-        $qc1 = new QueryCondition(QueryConditionOperator::equals('p.id', 'id', 2));
-        $qc2 = new QueryCondition(QueryConditionOperator::equals('p.id', 'id', 3));
+        $qc1 = new QueryCondition(QueryConditionComparision::equals('p.id', 'id', QueryConditionValueKind::Value));
+        $qc2 = new QueryCondition(QueryConditionComparision::equals('p.id', 'id'));
         $queryCondition->addCondition($qc1);
         $this->expectException(Exception::class);
         $queryCondition->addCondition($qc2);
@@ -981,7 +973,7 @@ class Test extends TestCase
 
     public function testQueryCondition2()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::differs('p.name', 'test', QueryConditionOperator::VALUE_KIND_VALUE));
+        $queryCondition = new QueryCondition(QueryConditionComparision::differs('p.name', 'test', QueryConditionValueKind::Value));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -995,7 +987,7 @@ class Test extends TestCase
 
     public function testQueryCondition3()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::gt('p.id', 1));
+        $queryCondition = new QueryCondition(QueryConditionComparision::gt('p.id', 1));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1009,7 +1001,7 @@ class Test extends TestCase
 
     public function testQueryCondition4()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::gte('p.id', 1));
+        $queryCondition = new QueryCondition(QueryConditionComparision::gte('p.id', 1));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1023,7 +1015,7 @@ class Test extends TestCase
 
     public function testQueryCondition5()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::lt('p.id', 3));
+        $queryCondition = new QueryCondition(QueryConditionComparision::lt('p.id', 3));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1037,7 +1029,7 @@ class Test extends TestCase
 
     public function testQueryCondition6()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::lte('p.id', 2));
+        $queryCondition = new QueryCondition(QueryConditionComparision::lte('p.id', 2));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1051,7 +1043,7 @@ class Test extends TestCase
 
     public function testQueryCondition7()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::isNull('p.entityTwo'));
+        $queryCondition = new QueryCondition(QueryConditionComparision::isNull('p.entityTwo'));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1066,7 +1058,7 @@ class Test extends TestCase
 
     public function testQueryCondition8()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::isNotNull('p.entityTwo'));
+        $queryCondition = new QueryCondition(QueryConditionComparision::isNotNull('p.entityTwo'));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1081,7 +1073,7 @@ class Test extends TestCase
 
     public function testQueryCondition9()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::in('p.id', [3,4,5]));
+        $queryCondition = new QueryCondition(QueryConditionComparision::in('p.id', [3,4,5]));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1096,7 +1088,7 @@ class Test extends TestCase
 
     public function testQueryCondition10()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::notIn('p.id', [2,3,4,5]));
+        $queryCondition = new QueryCondition(QueryConditionComparision::notIn('p.id', [2,3,4,5]));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1111,7 +1103,7 @@ class Test extends TestCase
 
     public function testQueryCondition11()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::contains('p.creatorBrowser', 'Fajerfoks', QueryConditionOperator::VALUE_KIND_VALUE));
+        $queryCondition = new QueryCondition(QueryConditionComparision::contains('p.creatorBrowser', 'Fajerfoks', QueryConditionValueKind::Value));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         /** @var Product $product */
@@ -1126,7 +1118,7 @@ class Test extends TestCase
 
     public function testHaving1()
     {
-        $queryCondition = new QueryCondition(QueryConditionOperator::contains('browser', 'Fajerfoks', QueryConditionOperator::VALUE_KIND_VALUE));
+        $queryCondition = new QueryCondition(QueryConditionComparision::contains('browser', 'Fajerfoks', QueryConditionValueKind::Value));
         $queryBuilder = $this->entityManager->createQueryBuilder(Product::class, 'p');
 
         $queryBuilder
@@ -1137,14 +1129,14 @@ class Test extends TestCase
             ->setSorting(new QuerySorting('p.id', QuerySorting::DIRECTION_ASC))
         ;
 
-        $product = $queryBuilder->getSingleResult(HydrationMode::HYDRATION_ARRAY);
+        $product = $queryBuilder->getSingleResult(HydrationMode::Array);
 
         $this->assertEquals(2, $product['id']);
     }
 
     public function testEntityManager6()
     {
-        $product = $this->entityManager->find(Product::class, 2, HydrationMode::HYDRATION_ARRAY);
+        $product = $this->entityManager->find(Product::class, 2, HydrationMode::Array);
         $this->assertEquals(2, $product['id']);
     }
 
@@ -1380,7 +1372,9 @@ class Test extends TestCase
 
         OrmService::route($arguments);
 
-        apcu_clear_cache();
+        if (function_exists('apcu_clear_cache')) {
+            apcu_clear_cache();
+        }
 
         $repository = $this->entityManager->createRepository(EntityZero::class);
         /** @var EntityZero $entityZero */

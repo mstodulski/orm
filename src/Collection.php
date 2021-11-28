@@ -127,7 +127,7 @@ class Collection implements Iterator {
         return null;
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->position = 0;
     }
@@ -142,7 +142,7 @@ class Collection implements Iterator {
         return $this->position;
     }
 
-    public function next()
+    public function next() : void
     {
         ++$this->position;
     }

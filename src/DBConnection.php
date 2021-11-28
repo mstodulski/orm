@@ -22,7 +22,7 @@ class DBConnection
     private DbAdapterInterface $dbAdapter;
     private EntityManager $entityManager;
 
-    public function __construct(DbAdapterInterface $dbAdapter, string $dsn, string $user, string $password = null, EntityManager $entityManager)
+    public function __construct(DbAdapterInterface $dbAdapter, string $dsn, string $user, string $password = null, EntityManager $entityManager = null)
     {
         $this->dbAdapter = $dbAdapter;
 
