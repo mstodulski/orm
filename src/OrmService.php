@@ -451,10 +451,7 @@ class OrmService
                         continue;
                     }
 
-                    $ormFieldChecksum = md5(json_encode($ormForeignKeyData));
-                    $dbFieldChecksum = md5(json_encode($dbTablesStructure[$ormTableName]['foreignKeys'][$ormForeignKeyName]));
-
-                    if ($ormFieldChecksum != $dbFieldChecksum) {
+                    if (!self::arraysAreTheSame($ormForeignKeyData, $dbTablesStructure[$ormTableName]['foreignKeys'][$ormForeignKeyName])) {
                         $foreignKeysToUpdate[$ormTableName][$ormForeignKeyName] = $ormForeignKeyData;
                     }
                 }
@@ -518,10 +515,7 @@ class OrmService
                         continue;
                     }
 
-                    $ormFieldChecksum = md5(json_encode($ormIndexData));
-                    $dbFieldChecksum = md5(json_encode($dbTablesStructure[$ormTableName]['tableIndexes'][$ormIndexName]));
-
-                    if ($ormFieldChecksum != $dbFieldChecksum) {
+                    if (!self::arraysAreTheSame($ormIndexData, $dbTablesStructure[$ormTableName]['tableIndexes'][$ormIndexName])) {
                         $indexesToUpdate[$ormTableName][$ormIndexName] = $ormIndexData;
 
                         foreach ($dbTablesStructure[$ormTableName]['tableIndexes'][$ormIndexName] as $property => $value) {
@@ -604,10 +598,7 @@ class OrmService
                     unset($ormFieldData['precision']);
                 }
 
-                $ormFieldChecksum = md5(json_encode($ormFieldData));
-                $dbFieldChecksum = md5(json_encode($dbFieldData));
-
-                if ($ormFieldChecksum != $dbFieldChecksum) {
+                if (!self::arraysAreTheSame($ormFieldData, $dbFieldData)) {
                     $fieldsToUpdate[$ormTableName][$ormFieldName] = $ormFieldData;
                 }
             }
@@ -1119,4 +1110,24 @@ class OrmService
         return $queries;
     }
 
+    private static function convertArray(array $array) :array
+    {
+        foreach ($array as $key => $arrayElement) {
+            if (is_array($arrayElement)) {
+                $array = self::convertArray($arrayElement);
+            } else {
+                $array[$key] = (string)$arrayElement;
+            }
+        }
+
+        return $array;
+    }
+
+    private static function arraysAreTheSame(array $array1, array $array2) : bool
+    {
+        $array1 = self::convertArray($array1);
+        $array2 = self::convertArray($array2);
+
+        return (md5(json_encode($array1)) == md5(json_encode($array2)));
+    }
 }

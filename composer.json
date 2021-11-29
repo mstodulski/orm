@@ -6,7 +6,7 @@
 		"php": ">=8.1",
 		"phpunit/phpunit": "9.5.*",
 		"mstodulski/cache": "1.0.*",
-		"nikic/php-parser": "^4.11",
+		"nikic/php-parser": "4.13.*",
 		"symfony/yaml": "5.3.*",
 		"ext-pdo": "*"
 	},
