@@ -348,7 +348,6 @@ class OrmService
 
                 $query = /** @lang */'INSERT INTO ' . self::MIGRATION_TABLE_NAME . ' SET migrationName="' . $migrationClassName . '", migrationDate = NOW()';
                 self::$entityManager->getDbConnection()->executeQuery($query);
-
             }
         }
 
@@ -368,9 +367,9 @@ class OrmService
         $indexesToCreate = self::findIndexesToCreate($ormStructure, $dbTablesStructure, array_keys($tablesToCreate), array_keys($tablesToRemove));
         $indexesToUpdate = self::findIndexesToUpdate($ormStructure, $dbTablesStructure, array_keys($tablesToCreate), array_keys($tablesToRemove));
         $indexesToRemove = self::findIndexesToRemove($ormStructure, $dbTablesStructure, $tablesToRemove);
-        $foreignKeysToCreate = self::findForeignKeysToCreate($ormStructure, $dbTablesStructure, array_keys($tablesToRemove));
+        $foreignKeysToCreate = self::findForeignKeysToCreate($ormStructure, $dbTablesStructure, array_keys($tablesToRemove), $fieldsToUpdate);
         $foreignKeysToUpdate = self::findForeignKeysToUpdate($ormStructure, $dbTablesStructure, array_keys($tablesToCreate), array_keys($tablesToRemove));
-        $foreignKeysToRemove = self::findForeignKeysToRemove($ormStructure, $dbTablesStructure);
+        $foreignKeysToRemove = self::findForeignKeysToRemove($ormStructure, $dbTablesStructure, $fieldsToUpdate);
 
         $migrationQueries = [];
         $migrationQueries = array_merge($migrationQueries, self::getQueriesForRemoveForeignKeys($foreignKeysToRemove));
@@ -421,13 +420,17 @@ class OrmService
         }
     }
 
-    private static function findForeignKeysToRemove($ormStructure, $dbTablesStructure): array
+    private static function findForeignKeysToRemove($ormStructure, $dbTablesStructure, $fieldsToUpdate): array
     {
         $foreignKeysToRemove = [];
 
         foreach ($dbTablesStructure as $dbTableName => $dbTableData) {
             foreach ($dbTableData['foreignKeys'] as $dbIndexName => $dbIndexData) {
-                if (!isset($ormStructure[$dbTableName]['foreignKeys'][$dbIndexName])) {
+
+                if (
+                    (!isset($ormStructure[$dbTableName]['foreignKeys'][$dbIndexName])) ||
+                    (isset($fieldsToUpdate[$dbIndexData['tableName']]) && isset($fieldsToUpdate[$dbIndexData['tableName']][$dbIndexData['columnName']]))
+                ){
                     $foreignKeysToRemove[$dbTableName][$dbIndexName] = $dbIndexName;
                 }
             }
@@ -461,7 +464,7 @@ class OrmService
         return $foreignKeysToUpdate;
     }
 
-    private static function findForeignKeysToCreate($ormStructure, $dbTablesStructure, $tablesToRemove): array
+    private static function findForeignKeysToCreate($ormStructure, $dbTablesStructure, $tablesToRemove, $fieldsToUpdate): array
     {
         $foreignKeysToCreate = [];
         foreach ($ormStructure as $ormTableName => $ormTableData) {
@@ -471,7 +474,10 @@ class OrmService
 
             if (isset($ormTableData['foreignKeys']) && is_array($ormTableData['foreignKeys'])) {
                 foreach ($ormTableData['foreignKeys'] as $ormForeignKeyName => $ormForeignKeyData) {
-                    if (!isset($dbTablesStructure[$ormTableName]['foreignKeys'][$ormForeignKeyName])) {
+                    if (
+                        (!isset($dbTablesStructure[$ormTableName]['foreignKeys'][$ormForeignKeyName])) ||
+                        (isset($fieldsToUpdate[$ormForeignKeyData['tableName']]) && isset($fieldsToUpdate[$ormForeignKeyData['tableName']][$ormForeignKeyData['columnName']]))
+                    ) {
                         $foreignKeysToCreate[$ormTableName][$ormForeignKeyName] = $ormForeignKeyData;
                     }
                 }
@@ -1116,6 +1122,7 @@ class OrmService
             if (is_array($arrayElement)) {
                 $array = self::convertArray($arrayElement);
             } else {
+                if (is_string($arrayElement) && (strtoupper($arrayElement) == 'NULL')) $arrayElement = '';
                 $array[$key] = (string)$arrayElement;
             }
         }

@@ -12,10 +12,6 @@ namespace mstodulski\database;
 
 use JetBrains\PhpStorm\Pure;
 
-//https://www.php.net/releases/8.1/en.php
-//utworzyć nową klasę ConditionOperator i tam te wszystkie parametry, potem update ofc
-//puścić composera
-
 class QueryConditionComparision {
 
     private static function insertQuotation(QueryConditionValueKind $valueKind): string

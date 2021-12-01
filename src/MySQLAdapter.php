@@ -252,7 +252,7 @@ class MySQLAdapter implements DbAdapterInterface
             'information_schema.referential_constraints.DELETE_RULE as deleteRule ' .
             'FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ' .
             'LEFT JOIN information_schema.referential_constraints ' .
-            'ON INFORMATION_SCHEMA.KEY_COLUMN_USAGE.CONSTRAINT_NAME=information_schema.referential_constraints.CONSTRAINT_NAME ' .
+            'ON INFORMATION_SCHEMA.KEY_COLUMN_USAGE.CONSTRAINT_NAME=information_schema.referential_constraints.CONSTRAINT_NAME AND information_schema.referential_constraints.CONSTRAINT_SCHEMA = "' . $dbName . '" ' .
             'WHERE ' .
             'INFORMATION_SCHEMA.KEY_COLUMN_USAGE.TABLE_SCHEMA="' . $dbName . '" AND ' .
             'INFORMATION_SCHEMA.KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME IS NOT NULL ' .

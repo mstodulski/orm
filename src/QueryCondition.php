@@ -22,8 +22,6 @@ class QueryCondition
     public array $conditions = [];
     public array $parameters = [];
 
-    //utworzyć nową klasę ParameterType i tam te wszystkie parametry, potem update ofc
-
     public function __construct(string $condition = null,
                                 mixed $parameterValue = null,
                                 $parameterType = QueryCondition::PARAMETER_TYPE_STRING
