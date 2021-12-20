@@ -39,6 +39,8 @@ class OrmService
         'extra' => null,
         'entityClass' => null,
         'joiningField' => null,
+        'relatedObjectField' => null,
+        'joiningClass' => null,
         'lazy' => true
     ];
 

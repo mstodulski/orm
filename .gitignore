@@ -9,3 +9,4 @@ tests/.phpunit.result.cache
 /cache/
 /tests/migrations/
 /vendor/
+/todo.txt

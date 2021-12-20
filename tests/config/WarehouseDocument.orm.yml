@@ -1,0 +1,9 @@
+entity: test\orm\helpers\WarehouseDocument
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  number:
+    type: varchar

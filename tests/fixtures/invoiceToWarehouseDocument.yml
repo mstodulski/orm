@@ -1,0 +1,85 @@
+fixture:
+  fixtureOrder: 9
+  class: test\orm\helpers\InvoiceToWarehouseDocument
+  factoryClass: test\orm\helpers\InvoiceToWarehouseDocumentMigrationFactory
+  records:
+    -
+      id: 1
+      FK_Inv_invoice: 1
+      FK_WaD_warehouseDocument: 1
+    -
+      id: 2
+      FK_Inv_invoice: 1
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 3
+      FK_Inv_invoice: 1
+      FK_WaD_warehouseDocument: 3
+    -
+      id: 4
+      FK_Inv_invoice: 2
+      FK_WaD_warehouseDocument: 1
+    -
+      id: 5
+      FK_Inv_invoice: 2
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 6
+      FK_Inv_invoice: 3
+      FK_WaD_warehouseDocument: 1
+    -
+      id: 7
+      FK_Inv_invoice: 3
+      FK_WaD_warehouseDocument: 3
+    -
+      id: 8
+      FK_Inv_invoice: 3
+      FK_WaD_warehouseDocument: 4
+    -
+      id: 9
+      FK_Inv_invoice: 4
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 10
+      FK_Inv_invoice: 4
+      FK_WaD_warehouseDocument: 3
+    -
+      id: 11
+      FK_Inv_invoice: 5
+      FK_WaD_warehouseDocument: 3
+    -
+      id: 12
+      FK_Inv_invoice: 5
+      FK_WaD_warehouseDocument: 4
+    -
+      id: 13
+      FK_Inv_invoice: 6
+      FK_WaD_warehouseDocument: 1
+    -
+      id: 14
+      FK_Inv_invoice: 6
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 15
+      FK_Inv_invoice: 7
+      FK_WaD_warehouseDocument: 1
+    -
+      id: 16
+      FK_Inv_invoice: 7
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 17
+      FK_Inv_invoice: 7
+      FK_WaD_warehouseDocument: 4
+    -
+      id: 18
+      FK_Inv_invoice: 8
+      FK_WaD_warehouseDocument: 2
+    -
+      id: 19
+      FK_Inv_invoice: 8
+      FK_WaD_warehouseDocument: 3
+    -
+      id: 20
+      FK_Inv_invoice: 8
+      FK_WaD_warehouseDocument: 4

@@ -1,0 +1,65 @@
+fixture:
+  fixtureOrder: 7
+  class: test\orm\helpers\InvoiceToWarehouseDocument
+  factoryClass: test\orm\helpers\InvoiceMigrationFactory
+  records:
+    -
+      id: 1
+      number: FV-1
+    -
+      id: 2
+      number: FV-2
+    -
+      id: 3
+      number: FV-3
+    -
+      id: 4
+      number: FV-4
+    -
+      id: 5
+      number: FV-5
+    -
+      id: 6
+      number: FV-6
+    -
+      id: 7
+      number: FV-7
+    -
+      id: 8
+      number: FV-8
+    -
+      id: 9
+      number: FV-9
+    -
+      id: 10
+      number: FV-10
+    -
+      id: 11
+      number: FV-11
+    -
+      id: 12
+      number: FV-12
+    -
+      id: 13
+      number: FV-13
+    -
+      id: 14
+      number: FV-14
+    -
+      id: 15
+      number: FV-15
+    -
+      id: 16
+      number: FV-16
+    -
+      id: 17
+      number: FV-17
+    -
+      id: 18
+      number: FV-18
+    -
+      id: 19
+      number: FV-19
+    -
+      id: 20
+      number: FV-20

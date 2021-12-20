@@ -456,54 +456,129 @@ class EntityManager
                     $collectionElementConfiguration = $this->loadClassConfiguration($object->getCollectionClass());
                     $idFieldCollectionElement = ObjectMapper::getIdFieldName($collectionElementConfiguration);
 
-                    if ($parentId !== null) {
-                        $allCollectionObjects = $this->findBy(
-                            $classConfiguration['fields'][$fieldName]['entityClass'],
-                            [
-                                $classConfiguration['fields'][$fieldName]['joiningField'] => $parentId
-                            ]
-                        );
+                    if (isset($fieldData['relatedObjectField']) || isset($fieldData['joiningClass'])) {
+                        if (isset($fieldData['relatedObjectField']) && !isset($fieldData['joiningClass'])) {
+                            throw new Exception('Field "joiningClass" is required when field "relatedObjectField" is defined in entity configuration (orm file)');
+                        } elseif (!isset($fieldData['relatedObjectField']) && isset($fieldData['joiningClass'])) {
+                            throw new Exception('Field "relatedObjectField" is required when field "joiningClass" is defined in entity configuration (orm file)');
+                        } else {
+                            $collectionElementConfiguration = $this->loadClassConfiguration($fieldData['joiningClass']);
+                            $idFieldCollectionElement = ObjectMapper::getIdFieldName($collectionElementConfiguration);
+                        }
 
-                        $allCollectionObjectsCollection->setCollectionArray($allCollectionObjects);
+                        //pobieranie wszystkich pozycji do kasowania, potem to obsłużyć
 
-                        foreach ($allCollectionObjects as $collectionObject) {
+                        if ($parentId !== null) {
+
+                            $allCollectionObjects = $this->findBy(
+                                $classConfiguration['fields'][$fieldName]['joiningClass'],
+                                [
+                                    $classConfiguration['fields'][$fieldName]['joiningField'] => $parentId
+                                ]
+                            );
+
+                            $allCollectionObjectsCollection->setCollectionArray($allCollectionObjects);
+
+                            foreach ($allCollectionObjects as $collectionObject) {
+                                $collectionElementProperties = [];
+                                ObjectMapper::getClassProperties(get_class($collectionObject), $collectionElementProperties, [$idFieldCollectionElement]);
+                                /** @var ReflectionProperty $collectionElementIdProperty */
+                                $collectionElementIdProperty = $collectionElementProperties[$idFieldCollectionElement];
+                                $visibilityLevelCollectionElement = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
+
+                                $collectionElementId = $collectionElementIdProperty->getValue($collectionObject);
+                                $allCollectionObjectsIds[$collectionElementId] = $collectionElementId;
+
+                                ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $visibilityLevelCollectionElement);
+                            }
+                        }
+
+                        foreach ($object as $collectionElement) {
+
+                            //TODO - czy tu nie trzeba zastąpić operatorem new i potem wywalić to co jest w dalszej części usuwanie pola ___orm_initialized ?
+                            $joiningEntity = ObjectFactory::create($collectionElementConfiguration['entity'], $this);
+                            $setter = 'set' . $classConfiguration['fields'][$fieldName]['relatedObjectField'];
+                            $joiningEntity->$setter($collectionElement);
+
                             $collectionElementProperties = [];
-                            ObjectMapper::getClassProperties(get_class($collectionObject), $collectionElementProperties, [$idFieldCollectionElement]);
+                            ObjectMapper::getClassProperties(get_class($joiningEntity), $collectionElementProperties, [$fieldData['joiningField'], $idFieldCollectionElement]);
+
+                            /** @var ReflectionProperty $collectionElementJoiningFieldProperty */
+                            $collectionElementJoiningFieldProperty = $collectionElementProperties[$fieldData['joiningField']];
                             /** @var ReflectionProperty $collectionElementIdProperty */
                             $collectionElementIdProperty = $collectionElementProperties[$idFieldCollectionElement];
-                            $visibilityLevelCollectionElement = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
 
-                            $collectionElementId = $collectionElementIdProperty->getValue($collectionObject);
-                            $allCollectionObjectsIds[$collectionElementId] = $collectionElementId;
+                            $collectionElementJoiningFieldVisiblility = ObjectMapper::setFieldAccessible($collectionElementJoiningFieldProperty);
+                            $collectionElementIdVisiblility = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
 
-                            ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $visibilityLevelCollectionElement);
+                            $collectionElementJoiningFieldProperty->setValue($joiningEntity, $entityToSave);
+                            $flushedCollectionElementId = $collectionElementIdProperty->getValue($joiningEntity);
+
+                            if (($flushedCollectionElementId !== null) && (isset($allCollectionObjectsIds[$flushedCollectionElementId]))) {
+                                unset($allCollectionObjectsIds[$flushedCollectionElementId]);
+                            }
+
+                            ObjectMapper::setOriginalAccessibility($collectionElementJoiningFieldProperty, $collectionElementJoiningFieldVisiblility);
+                            ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $collectionElementIdVisiblility);
+
+                            if (isset($joiningEntity->___orm_initialized)) unset($joiningEntity->___orm_initialized);
+
+                            $this->addObjectToSaveEntityQueue($collectionElement, $entityIndex, $additionalObjectsToFlush, 'collectionElement');
+                            $this->addObjectToSaveEntityQueue($joiningEntity, $entityIndex, $additionalObjectsToFlush, 'collectionElement');
+
+                            $this->priorityArray[spl_object_id($joiningEntity)] = $depth;
                         }
-                    }
+                    } else {
 
-                    foreach ($object as $collectionElement) {
-                        $collectionElementProperties = [];
-                        ObjectMapper::getClassProperties(get_class($collectionElement), $collectionElementProperties, [$fieldData['joiningField'], $idFieldCollectionElement]);
+                        if ($parentId !== null) {
+                            $allCollectionObjects = $this->findBy(
+                                $classConfiguration['fields'][$fieldName]['entityClass'],
+                                [
+                                    $classConfiguration['fields'][$fieldName]['joiningField'] => $parentId
+                                ]
+                            );
 
-                        /** @var ReflectionProperty $collectionElementJoiningFieldProperty */
-                        $collectionElementJoiningFieldProperty = $collectionElementProperties[$fieldData['joiningField']];
-                        /** @var ReflectionProperty $collectionElementIdProperty */
-                        $collectionElementIdProperty = $collectionElementProperties[$idFieldCollectionElement];
+                            $allCollectionObjectsCollection->setCollectionArray($allCollectionObjects);
 
-                        $collectionElementJoiningFieldVisiblility = ObjectMapper::setFieldAccessible($collectionElementJoiningFieldProperty);
-                        $collectionElementIdVisiblility = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
+                            foreach ($allCollectionObjects as $collectionObject) {
+                                $collectionElementProperties = [];
+                                ObjectMapper::getClassProperties(get_class($collectionObject), $collectionElementProperties, [$idFieldCollectionElement]);
+                                /** @var ReflectionProperty $collectionElementIdProperty */
+                                $collectionElementIdProperty = $collectionElementProperties[$idFieldCollectionElement];
+                                $visibilityLevelCollectionElement = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
 
-                        $collectionElementJoiningFieldProperty->setValue($collectionElement, $entityToSave);
-                        $flushedCollectionElementId = $collectionElementIdProperty->getValue($collectionElement);
+                                $collectionElementId = $collectionElementIdProperty->getValue($collectionObject);
+                                $allCollectionObjectsIds[$collectionElementId] = $collectionElementId;
 
-                        if (($flushedCollectionElementId !== null) && (isset($allCollectionObjectsIds[$flushedCollectionElementId]))) {
-                            unset($allCollectionObjectsIds[$flushedCollectionElementId]);
+                                ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $visibilityLevelCollectionElement);
+                            }
                         }
 
-                        ObjectMapper::setOriginalAccessibility($collectionElementJoiningFieldProperty, $collectionElementJoiningFieldVisiblility);
-                        ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $collectionElementIdVisiblility);
+                        foreach ($object as $collectionElement) {
+                            $collectionElementProperties = [];
+                            ObjectMapper::getClassProperties(get_class($collectionElement), $collectionElementProperties, [$fieldData['joiningField'], $idFieldCollectionElement]);
 
-                        $this->addObjectToSaveEntityQueue($collectionElement, $entityIndex,$additionalObjectsToFlush, 'collectionElement');
-                        $this->priorityArray[spl_object_id($collectionElement)] = $depth;
+                            /** @var ReflectionProperty $collectionElementJoiningFieldProperty */
+                            $collectionElementJoiningFieldProperty = $collectionElementProperties[$fieldData['joiningField']];
+                            /** @var ReflectionProperty $collectionElementIdProperty */
+                            $collectionElementIdProperty = $collectionElementProperties[$idFieldCollectionElement];
+
+                            $collectionElementJoiningFieldVisiblility = ObjectMapper::setFieldAccessible($collectionElementJoiningFieldProperty);
+                            $collectionElementIdVisiblility = ObjectMapper::setFieldAccessible($collectionElementIdProperty);
+
+                            $collectionElementJoiningFieldProperty->setValue($collectionElement, $entityToSave);
+                            $flushedCollectionElementId = $collectionElementIdProperty->getValue($collectionElement);
+
+                            if (($flushedCollectionElementId !== null) && (isset($allCollectionObjectsIds[$flushedCollectionElementId]))) {
+                                unset($allCollectionObjectsIds[$flushedCollectionElementId]);
+                            }
+
+                            ObjectMapper::setOriginalAccessibility($collectionElementJoiningFieldProperty, $collectionElementJoiningFieldVisiblility);
+                            ObjectMapper::setOriginalAccessibility($collectionElementIdProperty, $collectionElementIdVisiblility);
+
+                            $this->addObjectToSaveEntityQueue($collectionElement, $entityIndex, $additionalObjectsToFlush, 'collectionElement');
+                            $this->priorityArray[spl_object_id($collectionElement)] = $depth;
+                        }
                     }
 
                     if (count($allCollectionObjectsIds) > 0) {
@@ -511,7 +586,6 @@ class EntityManager
                             $additionalObjectToRemove[] = $allCollectionObjectsCollection->findOneByFieldValue($idFieldCollectionElement, $collectionObjectId);
                         }
                     }
-
                 } elseif (is_object($object) && (get_class($object) != LazyCollection::class)) {
                     $this->addObjectToSaveEntityQueue($object, $entityIndex,$additionalObjectsToFlush, 'entity');
                     $this->priorityArray[spl_object_id($object)] = $depth;
@@ -533,7 +607,6 @@ class EntityManager
                     $newEntitiesToSave[spl_object_id($entity)] = $entity;
                 }
             }
-            //$newEntitiesToSave[spl_object_id($entityToSave)] = $entityToSave;
 
             if (isset($additionalObjectsToFlush[$entityIndex]['collectionElement'])) {
                 foreach ($additionalObjectsToFlush[$entityIndex]['collectionElement'] as $entity) {

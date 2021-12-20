@@ -1,0 +1,15 @@
+entity: test\orm\helpers\Invoice
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  number:
+    type: varchar
+  warehouseDocuments:
+    type: collection
+    entityClass: test\orm\helpers\WarehouseDocument
+    joiningField: FK_Inv_invoice
+    relatedObjectField: FK_WaD_warehouseDocument
+    joiningClass: test\orm\helpers\InvoiceToWarehouseDocument

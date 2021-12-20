@@ -7,6 +7,7 @@ use test\orm\helpers\EntityTwo;
 use test\orm\helpers\EntityWithoutConfiguration;
 use test\orm\helpers\EntityZero;
 use test\orm\helpers\Feature;
+use test\orm\helpers\Invoice;
 use test\orm\helpers\Price;
 use test\orm\helpers\Product;
 use test\orm\helpers\User;
@@ -23,6 +24,7 @@ use mstodulski\database\QuerySorting;
 use mstodulski\database\Repository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
+use test\orm\helpers\WarehouseDocument;
 
 class Test extends TestCase
 {
@@ -1519,5 +1521,179 @@ class Test extends TestCase
         }
 
         $this->assertNull($entityZeroTable);
+    }
+
+    public function testManyToManyCollectionWithExistingElements()
+    {
+        $warehouseDocumentsIds = [17, 18, 19, 20];
+
+        $invoice = new Invoice();
+        $invoice->setNumber('FV-TEST-TEST');
+
+        $warehouseDocumentRepository = $this->entityManager->createRepository(WarehouseDocument::class);
+        $warehouseDocuments = $warehouseDocumentRepository->findBy(['id' => $warehouseDocumentsIds]);
+
+        foreach ($warehouseDocuments as $warehouseDocument) {
+            $invoice->getWarehouseDocuments()->add($warehouseDocument);
+        }
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        $queryBuilder = $this->entityManager->createQueryBuilder(Invoice::class, 'i');
+        $queryBuilder
+            ->setSorting(new QuerySorting('i.id', 'DESC'));
+
+        /** @var Invoice $invoice */
+        $invoice = $queryBuilder->getSingleResult();
+        $this->assertEquals('FV-TEST-TEST', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getId(), $warehouseDocumentsIds);
+        }
+    }
+
+    public function testManyToManyCollectionWithNonExistingElements()
+    {
+        $warehouseDocumentNumbers = ['WADOTEST-1', 'WADOTEST-2', 'WADOTEST-3', 'WADOTEST-4'];
+
+        $invoice = new Invoice();
+        $invoice->setNumber('FV-TEST2-TEST2');
+
+        $wd1 = new WarehouseDocument();
+        $wd1->setNumber($warehouseDocumentNumbers[0]);
+        $invoice->getWarehouseDocuments()->add($wd1);
+
+        $wd2 = new WarehouseDocument();
+        $wd2->setNumber($warehouseDocumentNumbers[1]);
+        $invoice->getWarehouseDocuments()->add($wd2);
+
+        $wd3 = new WarehouseDocument();
+        $wd3->setNumber($warehouseDocumentNumbers[2]);
+        $invoice->getWarehouseDocuments()->add($wd3);
+
+        $wd4 = new WarehouseDocument();
+        $wd4->setNumber($warehouseDocumentNumbers[3]);
+        $invoice->getWarehouseDocuments()->add($wd4);
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        $queryBuilder = $this->entityManager->createQueryBuilder(Invoice::class, 'i');
+        $queryBuilder
+            ->setSorting(new QuerySorting('i.id', 'DESC'));
+
+        /** @var Invoice $invoice */
+        $invoice = $queryBuilder->getSingleResult();
+        $this->assertEquals('FV-TEST2-TEST2', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+    }
+
+    public function testManyToManyCollectionAddExistingToExistingObject()
+    {
+        $invoiceRepository = $this->entityManager->createRepository(Invoice::class);
+        $invoice = $invoiceRepository->find(20);
+
+        $warehouseDocumentsIds = [17, 18, 19, 20];
+
+        $warehouseDocumentRepository = $this->entityManager->createRepository(WarehouseDocument::class);
+        $warehouseDocuments = $warehouseDocumentRepository->findBy(['id' => $warehouseDocumentsIds]);
+
+        foreach ($warehouseDocuments as $warehouseDocument) {
+            $invoice->getWarehouseDocuments()->add($warehouseDocument);
+        }
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        /** @var Invoice $invoice */
+        $invoice = $invoiceRepository->find(20);
+
+        $this->assertEquals('FV-20', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getId(), $warehouseDocumentsIds);
+        }
+    }
+
+    public function testManyToManyCollectionAddNotExistingToExistingObject()
+    {
+        $warehouseDocumentNumbers = ['WADOTEST-11', 'WADOTEST-22', 'WADOTEST-33', 'WADOTEST-44'];
+
+        $invoiceRepository = $this->entityManager->createRepository(Invoice::class);
+        /** @var Invoice $invoice */
+        $invoice = $invoiceRepository->find(19);
+
+
+        $wd1 = new WarehouseDocument();
+        $wd1->setNumber($warehouseDocumentNumbers[0]);
+        $invoice->getWarehouseDocuments()->add($wd1);
+
+        $wd2 = new WarehouseDocument();
+        $wd2->setNumber($warehouseDocumentNumbers[1]);
+        $invoice->getWarehouseDocuments()->add($wd2);
+
+        $wd3 = new WarehouseDocument();
+        $wd3->setNumber($warehouseDocumentNumbers[2]);
+        $invoice->getWarehouseDocuments()->add($wd3);
+
+        $wd4 = new WarehouseDocument();
+        $wd4->setNumber($warehouseDocumentNumbers[3]);
+        $invoice->getWarehouseDocuments()->add($wd4);
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+
+        /** @var Invoice $invoice */
+        $invoice = $invoiceRepository->find(19);
+        $this->assertEquals('FV-19', $invoice->getNumber());
+
+        $this->assertEquals(4, $invoice->getWarehouseDocuments()->getRecordsCount());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+    }
+
+    public function testRemoveFromManyToManyCollection()
+    {
+        $warehouseDocumentNumbers = ['WADOTEST-11', 'WADOTEST-22', 'WADOTEST-33', 'WADOTEST-44'];
+
+        $invoiceRepository = $this->entityManager->createRepository(Invoice::class);
+        /** @var Invoice $invoice */
+        $invoice = $invoiceRepository->find(19);
+        $this->assertEquals('FV-19', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+
+        $invoice->getWarehouseDocuments()->remove(2);
+        $invoice->getWarehouseDocuments()->remove(0);
+
+        unset($warehouseDocumentNumbers[2]);
+        unset($warehouseDocumentNumbers[0]);
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        /** @var Invoice $invoice */
+        $invoice = $invoiceRepository->find(19);
+
+        $this->assertEquals(2, $invoice->getWarehouseDocuments()->getRecordsCount());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
     }
 }

@@ -111,6 +111,8 @@ class ObjectMapper {
                 if (isset($entityConfiguration['fields'][$reflectionObjectField->getName()])) {
                     if ($entityConfiguration['fields'][$reflectionObjectField->getName()]['type'] == 'collection') {
 
+                        //TODO tutaj obsługa kolekcji
+
                         $isLazy = !isset($entityConfiguration['fields'][$reflectionObjectField->getName()]['lazy']) || $entityConfiguration['fields'][$reflectionObjectField->getName()]['lazy'];
 
                         $visibilityLevel = self::setFieldAccessible($reflectionObjectField);

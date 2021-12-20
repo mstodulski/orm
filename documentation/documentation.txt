@@ -1,0 +1,79 @@
+1. Co to jest orm
+Orm jest biblioteką wspomagającą translację obiektów utworzonych w php, na rekordy relacyjnej bazy danych, i odwrotnie,
+tzn. za pomocą tej biblioteki można dokonać translacji rekordów bazy danych na obiekty php. Biblioteka umożliwia także
+generowanie zapytań aktualizujących strukturę bazy danych do stanu zastanego w konfiguracji poszczególnych klas (migracje),
+a także automatyczne tworzenie obiektów, np. wymaganych wartości słownikowych dla nowych systemów.
+Na chwilę obecną biblioteka współpracuje jedynie z bazą danych MySQL. Nic nie stoi jednak na przeszkodzie, aby zaimplementować
+własną bibliotekę do obsługi dowolnej bazy danych.
+
+2. Jak zainstalować orm
+Instalacja biblioteki jest bardzo prosta i można jej dokonać za pomocą Composera. Jeśli znalazłeś ją na githubie, to
+powinieneś wskazać, skąd Composer powinien pobrać kod biblioteki. W tym celu do pliku composer.json należy dodać wskazanie
+na repozytorium, które Composer powinien przeszukiwać w poszukiwaniu bibliotek:
+
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/mstodulski/orm.git"
+    }
+]
+
+Następnie, w tym samym pliku, należy dodać bibliotekę do sekcji "require":
+
+"require": {
+    "mstodulski/orm": "1.0.*",
+}
+
+Potem wystarczy zaktualizować biblioteki poleceniem:
+
+php composer update
+
+Jeśli bibliotekę znalazłeś na packagist.org, to wystarczy wykonać polecenie:
+
+php composer require mstodulski/orm
+
+Biblioteka zainstaluje się automatycznie i w obu przypadkach, o ile nie zostało to skonfigurowane inaczej, zostanie
+zainstalowana w katalogu "vendor".
+
+Nie zapomnij dołączyć do swojego pliku index.php pliku /vendor/autoload.php, aby automatycznie ładować klasy bibliotek
+zainstalowanych Composerem.
+
+3. Jak skonfigurować orm
+Aby wykorzystywać bibliotekę orm, należy ją najpierw skonfigurować. Entry-pointem do wszelkich funkcjonalności, wchodzących
+w skład biblioteki, jest klasa EntityManager, i to obiekt tej klasy musimy utworzyć, aby móc robić cokolwiek innego.
+W tym celu należy utworzyć tablicę, zawierającą następujące klucze:
+
+$config['dsn'] = 'mysql:host=localhost;port=3306;dbname=orm;charset=utf8;'; - nazwa źródła danych, które posłuży nam do
+współpracy z bazą danych
+$config['user'] = 'root'; - nazwa użytkownika bazy danych. Pamiętaj, że użytkownika root możemy bezpiecznie używać tylko
+na lokalnym komputerze z niewystawionym na zewnątrz serwerem http ani bazą danych.
+$config['password'] = null; - hasło użytkownika bazy danych. Pamiętaj, że hasło może być puste tylko na lokalnym komputerze
+z niewystawionym na zewnątrz serwerem http ani bazą danych.
+$config['entityConfigurationDir'] = 'tests/config/'; - ścieżka do katalogu, w którym będziemy przechowywać pliki *.orm.yml,
+w których będzie zapisana konfiguracja poszczególnych klas, pozwalająca na współpracę z bazą danych
+$config['migrationDir'] = 'tests/migrations/'; - ścieżka do katalogu, w którym będą tworzone migracje do aktualizowania
+struktury bazy danych. Z tego katalogu będą one również pobierane przy wykonywaniu aktualizacji struktury.
+$config['fixtureDir'] = 'tests/fixtures/'; - ścieżka do katalogu, w którym będą przechowywane pliki *.yml, zawierające
+dane niezbędne do automatycznego utworzenia nowych obiektów w bazie danych, np. danych słownikowych przy instalacji
+czystego systemu.
+$config['mode'] = 'prod'; - tryb pracy biblioteki, może przyjmować wartości "prod" lub "dev". W przypadku ustawienia "prod"
+dane, które mogą zostać wykorzystane ponownie (ale nie dane z bazy danych, tylko dane takie jak konfiguracja poszczególnych
+klas, klasy proxy, itp), są zapisywane do cache w celu uzyskania szybszego dostępu do nich. W przypadku ustawienia "dev"
+wszystkie konfiguracje klas i pozostałe dane są pobierane za każdym razem z odpowiedniego źródła.
+
+Kolejną rzeczą którą musimy mieć, jest klasa tworząca konkretne zapytania dla konkretnej bazy danych. W przypadku bazy
+MySQL jest to klasa dołączona do biblioteki, o nazwie mstodulski\database\MySQLAdapter
+
+Mając konfigurację oraz klasę do bezpośredniej wpółpracy z bazą danych możemy utworzyć obiekt klasy EntityManager:
+
+$mysqlAdapter = new mstodulski\database\MySQLAdapter();
+$entityManager = mstodulski\database\EntityManager::create($mysqlAdapter, $config);
+
+W tym momencie mamy już obiekt klasy EntityManager, którym możemy tworzyć obiekty repozytorów do prostego pobierania danych
+z bazy, obiekt query buildera do pobierania obiektów z bazy opartego o bardziej skomplikowane warunki. Za pomocą tego obiektu
+możemy również zapisywać lub usuwać rekordy z bazy danych.
+
+4. Jak utworzyć encję i jej konfigurację
+5. Jak dodać prostą relację z innym obiektem
+6. Jak dodać relację manyToMany do obiektu
+7. Polecenia konsolowe

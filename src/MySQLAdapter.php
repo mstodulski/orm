@@ -63,10 +63,7 @@ class MySQLAdapter implements DbAdapterInterface
                 $queryFields[] = $fieldName . ' = :' .$fieldName;
             }
             $query .= implode(', ', $queryFields);
-
-            if (null !== $entityData['identifier']['value']) {
-                $query .= ' WHERE ' . $entityData['identifier']['fieldName'] . '=:' . $entityData['identifier']['fieldName'] . ' ';
-            }
+            $query .= ' WHERE ' . $entityData['identifier']['fieldName'] . '=:' . $entityData['identifier']['fieldName'] . ' ';
         }
 
         return $query;

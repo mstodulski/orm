@@ -1,0 +1,65 @@
+fixture:
+  fixtureOrder: 8
+  class: test\orm\helpers\WarehouseDocument
+  factoryClass: test\orm\helpers\WarehouseDocumentMigrationFactory
+  records:
+    -
+      id: 1
+      number: WD-1
+    -
+      id: 2
+      number: WD-2
+    -
+      id: 3
+      number: WD-3
+    -
+      id: 4
+      number: WD-4
+    -
+      id: 5
+      number: WD-5
+    -
+      id: 6
+      number: WD-6
+    -
+      id: 7
+      number: WD-7
+    -
+      id: 8
+      number: WD-8
+    -
+      id: 9
+      number: WD-9
+    -
+      id: 10
+      number: WD-10
+    -
+      id: 11
+      number: WD-11
+    -
+      id: 12
+      number: WD-12
+    -
+      id: 13
+      number: WD-13
+    -
+      id: 14
+      number: WD-14
+    -
+      id: 15
+      number: WD-15
+    -
+      id: 16
+      number: WD-16
+    -
+      id: 17
+      number: WD-17
+    -
+      id: 18
+      number: WD-18
+    -
+      id: 19
+      number: WD-19
+    -
+      id: 20
+      number: WD-20
