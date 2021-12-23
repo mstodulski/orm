@@ -32,6 +32,4 @@ foreignKeys:
     referencedColumnName: 'id'
     updateRule: 'CASCADE'
     deleteRule: 'CASCADE'
-lifecycle:
-#  postLoad: test\orm\helpers\ProductEventService::postLoadEventProductFeature
-#  postCreate: test\orm\helpers\ProductEventService::postCreateEventProductFeature
+

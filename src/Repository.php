@@ -71,9 +71,14 @@ class Repository
         return $this->entityManager->find($this->entityClass, $id, $hydrationMode);
     }
 
-    public function findBy(array $parameters, HydrationMode $hydrationMode = HydrationMode::Object) : array
+    public function findBy(array $parameters, array $sort = [], HydrationMode $hydrationMode = HydrationMode::Object) : array
     {
-        return $this->entityManager->findBy($this->entityClass, $parameters, $hydrationMode);
+        return $this->entityManager->findBy($this->entityClass, $parameters, $sort, $hydrationMode);
+    }
+
+    public function findOneBy(array $parameters, array $sort = [], HydrationMode $hydrationMode = HydrationMode::Object) : array|object
+    {
+        return $this->entityManager->findOneBy($this->entityClass, $parameters, $sort, $hydrationMode);
     }
 
     public function count(array $parameters = []) : int
@@ -81,8 +86,8 @@ class Repository
         return $this->entityManager->count($this->entityClass, $parameters);
     }
 
-    public function findAll(HydrationMode $hydrationMode = HydrationMode::Object) : array
+    public function findAll(array $sort = [], HydrationMode $hydrationMode = HydrationMode::Object) : array
     {
-        return $this->entityManager->findBy($this->entityClass, [], $hydrationMode);
+        return $this->entityManager->findBy($this->entityClass, [], $sort, $hydrationMode);
     }
 }

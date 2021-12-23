@@ -10,6 +10,7 @@ use test\orm\helpers\Feature;
 use test\orm\helpers\Invoice;
 use test\orm\helpers\Price;
 use test\orm\helpers\Product;
+use test\orm\helpers\SaleInvoice;
 use test\orm\helpers\User;
 use JetBrains\PhpStorm\NoReturn;
 use mstodulski\database\Collection;
@@ -39,7 +40,6 @@ class Test extends TestCase
         $mysqlAdapter = new $this->config['sqlAdapterClass']();
         $this->entityManager = EntityManager::create($mysqlAdapter, $this->config);
     }
-
 
 //    public function testTimes()
 //    {
@@ -521,7 +521,7 @@ class Test extends TestCase
     public function testProduct8()
     {
         $repository = $this->entityManager->createRepository(Product::class);
-        $products = $repository->findAll(HydrationMode::Array);
+        $products = $repository->findAll([], HydrationMode::Array);
 
         /** @var Product $product */
         $product = $products[0];
@@ -550,7 +550,7 @@ class Test extends TestCase
     public function testProduct10()
     {
         $repository = $this->entityManager->createRepository(Product::class);
-        $products = $repository->findBy(['sortOrder' => 2, 'creatorBrowser' => 'Fajerfoks'], HydrationMode::Array);
+        $products = $repository->findBy(['sortOrder' => 2, 'creatorBrowser' => 'Fajerfoks'], [], HydrationMode::Array);
 
         /** @var Product $product */
         $product = $products[0];
@@ -1696,4 +1696,75 @@ class Test extends TestCase
             $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
         }
     }
+
+    public function testManyToManyNotLazyCollectionWithNonExistingElements()
+    {
+        $warehouseDocumentNumbers = ['WADOTEST-13', 'WADOTEST-24', 'WADOTEST-35', 'WADOTEST-46'];
+
+        $invoice = new SaleInvoice();
+        $invoice->setNumber('FZ-TEST-TEST');
+
+        $wd1 = new WarehouseDocument();
+        $wd1->setNumber($warehouseDocumentNumbers[0]);
+        $invoice->getWarehouseDocuments()->add($wd1);
+
+        $wd2 = new WarehouseDocument();
+        $wd2->setNumber($warehouseDocumentNumbers[1]);
+        $invoice->getWarehouseDocuments()->add($wd2);
+
+        $wd3 = new WarehouseDocument();
+        $wd3->setNumber($warehouseDocumentNumbers[2]);
+        $invoice->getWarehouseDocuments()->add($wd3);
+
+        $wd4 = new WarehouseDocument();
+        $wd4->setNumber($warehouseDocumentNumbers[3]);
+        $invoice->getWarehouseDocuments()->add($wd4);
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        $repository = $this->entityManager->createRepository(SaleInvoice::class);
+        $invoice = $repository->findOneBy(['number' => 'FZ-TEST-TEST'], ['id' => 'DESC']);
+        $this->assertEquals('FZ-TEST-TEST', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+    }
+
+    public function testRemoveFromManyToManyNotLazyCollection()
+    {
+        $warehouseDocumentNumbers = ['WADOTEST-13', 'WADOTEST-24', 'WADOTEST-35', 'WADOTEST-46'];
+
+        $invoiceRepository = $this->entityManager->createRepository(SaleInvoice::class);
+        /** @var SaleInvoice $invoice */
+        $invoice = $invoiceRepository->findOneBy(['number' => 'FZ-TEST-TEST']);
+        $this->assertEquals('FZ-TEST-TEST', $invoice->getNumber());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+
+        $invoice->getWarehouseDocuments()->remove(2);
+        $invoice->getWarehouseDocuments()->remove(0);
+
+        unset($warehouseDocumentNumbers[2]);
+        unset($warehouseDocumentNumbers[0]);
+
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
+
+        /** @var SaleInvoice $invoice */
+        $invoice = $invoiceRepository->findOneBy(['number' => 'FZ-TEST-TEST']);
+
+        $this->assertEquals(2, $invoice->getWarehouseDocuments()->getRecordsCount());
+
+        /** @var WarehouseDocument $warehouseDocument */
+        foreach ($invoice->getWarehouseDocuments() as $warehouseDocument) {
+            $this->assertContains($warehouseDocument->getNumber(), $warehouseDocumentNumbers);
+        }
+    }
+
 }

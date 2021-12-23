@@ -155,7 +155,7 @@ class EntityManager
         throw new Exception('Unexpected error');
     }
 
-    private function findRecords(string $className, array $parameters) : array
+    private function findRecords(string $className, array $parameters, array $sort = []) : array
     {
         $adapter = $this->dbConnection->getDbAdapter();
         $queryBuilder = $this->createQueryBuilder($className);
@@ -176,6 +176,15 @@ class EntityManager
             $queryBuilder->addWhere($queryCondition);
         }
 
+        if (!empty($sort)) {
+            $querySort = new QuerySorting();
+            foreach ($sort as $sortField => $sortDirection) {
+                $querySort->addField($sortField, $sortDirection);
+            }
+
+            $queryBuilder->setSorting($querySort);
+        }
+
         $query = $adapter->getSelectQuery($queryBuilder);
 
         $parameters = [];
@@ -185,6 +194,47 @@ class EntityManager
         }
 
         return $this->dbConnection->getTable($query, $parameters);
+    }
+
+    private function findRecord(string $className, array $parameters, array $sort = []) : array
+    {
+        $adapter = $this->dbConnection->getDbAdapter();
+        $queryBuilder = $this->createQueryBuilder($className);
+
+        if (!empty($parameters)) {
+            $queryCondition = new QueryCondition();
+            foreach ($parameters as $field => $value) {
+
+                if (is_array($value)) {
+                    $partialQueryCondition = new QueryCondition(QueryConditionComparision::in($field, $value));
+                } else {
+                    $partialQueryCondition = new QueryCondition($field . ' = :' . $field, $value);
+                }
+
+                $queryCondition->addCondition($partialQueryCondition, QueryConditionOperator::And);
+            }
+
+            $queryBuilder->addWhere($queryCondition);
+        }
+
+        if (!empty($sort)) {
+            $querySort = new QuerySorting();
+            foreach ($sort as $sortField => $sortDirection) {
+                $querySort->addField($sortField, $sortDirection);
+            }
+
+            $queryBuilder->setSorting($querySort);
+        }
+
+        $query = $adapter->getSelectQuery($queryBuilder);
+
+        $parameters = [];
+        /** @var QueryCondition $queryCondition */
+        foreach ($queryBuilder->getWhere() as $queryCondition) {
+            $parameters = array_merge($parameters, $queryCondition->parameters);
+        }
+
+        return $this->dbConnection->getSingleRow($query, $parameters);
     }
 
     public function findForParent(string $className, array $parameters, string $fieldName, object $parent) : array
@@ -201,9 +251,9 @@ class EntityManager
         return $resultTable;
     }
 
-    public function findBy(string $className, array $parameters, HydrationMode $hydrationMode = HydrationMode::Object) : array
+    public function findBy(string $className, array $parameters, array $sort = [], HydrationMode $hydrationMode = HydrationMode::Object) : array
     {
-        $table = $this->findRecords($className, $parameters);
+        $table = $this->findRecords($className, $parameters, $sort);
 
         switch ($hydrationMode) {
             case HydrationMode::Array:
@@ -217,6 +267,21 @@ class EntityManager
                 }
 
                 return $resultTable;
+        }
+
+        throw new Exception('Unexpected error');
+    }
+
+    public function findOneBy(string $className, array $parameters, array $sort = [], HydrationMode $hydrationMode = HydrationMode::Object) : array|object
+    {
+        $row = $this->findRecord($className, $parameters, $sort);
+
+        switch ($hydrationMode) {
+            case HydrationMode::Array:
+                return $row;
+            case HydrationMode::Object:
+                $entity = ObjectFactory::create($className, $this);
+                return ObjectMapper::mapEntity($entity, $row, $this);
         }
 
         throw new Exception('Unexpected error');
@@ -722,7 +787,7 @@ class EntityManager
         $pattern = sprintf('~%s=([^;]*)(?:;|$)~', preg_quote($dsnParameter, '~'));
 
         $result = preg_match($pattern, self::$config['dsn'], $matches);
-        if ($result === FALSE) {
+        if ($result === false) {
             throw new RuntimeException('Regular expression matching failed unexpectedly.');
         }
 

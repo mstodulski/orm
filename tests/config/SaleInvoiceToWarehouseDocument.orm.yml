@@ -1,0 +1,13 @@
+entity: test\orm\helpers\SaleInvoiceToWarehouseDocument
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  FK_Sal_invoice:
+    type: entity
+    entityClass: test\orm\helpers\SaleInvoice
+  FK_WaD_warehouseDocument:
+    type: entity
+    entityClass: test\orm\helpers\WarehouseDocument

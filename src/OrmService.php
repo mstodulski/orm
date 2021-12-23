@@ -63,7 +63,6 @@ class OrmService
     ];
 
     private static array $allowedFieldTypes = [
-        'int',
         'tinyint',
         'smallint',
         'mediumint',

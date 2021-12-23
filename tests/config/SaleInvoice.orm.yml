@@ -1,0 +1,16 @@
+entity: test\orm\helpers\SaleInvoice
+repository: mstodulski\database\Repository
+fields:
+  id:
+    type: int
+    id: true
+    extra: auto_increment
+  number:
+    type: varchar
+  warehouseDocuments:
+    type: collection
+    entityClass: test\orm\helpers\WarehouseDocument
+    joiningField: FK_Sal_invoice
+    relatedObjectField: FK_WaD_warehouseDocument
+    joiningClass: test\orm\helpers\SaleInvoiceToWarehouseDocument
+    lazy: false
